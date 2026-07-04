@@ -1,0 +1,8 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'tool'
+tags: ['python']
+
+project:
+  name: 'harness-hermes'
+  description: 'hermes-agent harness — install, cli-config.yaml presets, tools/MCP wiring'

@@ -1,0 +1,14 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'tool'
+
+project:
+  name: 'local-models'
+  description: 'Hardware probe, tiered model matrix, OpenAI-compatible serving configs'
+
+tasks:
+  lint:
+    command: 'shellcheck probe.sh serve/serve-llamacpp.sh serve/serve-vllm.sh'
+    inputs:
+      - 'probe.sh'
+      - 'serve/*.sh'

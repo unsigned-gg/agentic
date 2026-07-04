@@ -1,0 +1,13 @@
+# hermes-agent preset: local OpenAI-compatible endpoint as the model provider.
+# Ports match the pi/opencode presets and packages/local-models/serve configs:
+#   ollama :11434 · llama.cpp :8080 · vLLM :8000
+# Verify keys against `hermes config list` for your installed version —
+# treat this file as a starting point, not gospel (see package README).
+# No secrets here: local endpoints don't need real API keys.
+
+model_provider: openai
+openai_base_url: "http://localhost:8000/v1"
+openai_api_key: "none"
+# The model id must match what the server actually serves — see
+# packages/local-models/MODELS.md for the tier matrix.
+model: "served-model"

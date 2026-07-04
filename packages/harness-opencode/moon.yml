@@ -1,0 +1,8 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'tool'
+tags: ['node']
+
+project:
+  name: 'harness-opencode'
+  description: 'opencode harness — install, opencode.json presets, plugins'

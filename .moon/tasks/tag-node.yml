@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/tasks.json'
+
+# Inherited ONLY by projects tagged 'node' (a node opts into gates by tag).
+inheritedBy:
+  tag: 'node'
+
+tasks:
+  build: { command: 'pnpm build' }
+  test: { command: 'pnpm test' }
+  lint: { command: 'pnpm lint' }
+  # pnpm exec resolves tsc from the workspace's node_modules/.bin — a bare
+  # `tsc` is not on moon's task PATH here (divergence from terrarium noted).
+  typecheck: { command: 'pnpm exec tsc --noEmit' }

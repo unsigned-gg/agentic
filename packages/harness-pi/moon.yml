@@ -1,0 +1,8 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'tool'
+tags: ['node']
+
+project:
+  name: 'harness-pi'
+  description: 'pi.dev harness — install, config presets, models.json local endpoints, TS extensions'
