@@ -67,7 +67,23 @@ PARAMETER draft_num_predict 4
 
 Per-position acceptance decays fast (0.77/0.56/0.39/0.28) — try
 `draft_num_predict 2-3` if verification overhead shows at higher batch.
-MoE MTP GGUFs (35B-A3B nextn) still fail to load: ollama/ollama#16282.
+MoE MTP (35B-A3B nextn) **works** on 0.31.1 (ollama#16282 no longer bites)
+but post-tensor init exceeds the default 5m load watchdog — serve with
+`OLLAMA_LOAD_TIMEOUT=15m`.
+
+## Banked models (verified on RTX 5090 32GB, 2026-07-04)
+
+Local bank in `~/.ollama`; private mirror **hf.co/todie/model-bank** holds the
+exact GGUFs + sha256s (canonical identity — upstream repos can mutate).
+All UD-Q4_K_XL dynamic quants from unsloth, pulled via `hf.co/` refs.
+
+| Model | tok/s | Notes |
+|---|---|---|
+| Qwen3.6-35B-A3B-MTP | 99 (58 plain) | T2 flagship; MTP +70%; needs load-timeout bump |
+| Qwen3.6-27B-MTP (`qwen3.6-27b-mtp`) | ~110 (68 plain) | dense T1 daily driver; MTP +60% |
+| GLM-4.7-Flash | 217 | fastest banked; agentic GLM small |
+| Devstral Small 2 24B | 86 | agent-tuned, best tool discipline; no MTP |
+| Qwen3.5-9B-MTP (`qwen3.5-9b-mtp`) | 174 | T0 utility/triage |
 
 ## Serving stack rules of thumb
 
