@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'library'
+
+project:
+  name: 'skills'
+  description: 'Shared agentskills.io skills — authored once, installed into pi, opencode, hermes, Claude Code'
+
+tasks:
+  lint:
+    command: 'shellcheck install.sh'
+    inputs:
+      - 'install.sh'

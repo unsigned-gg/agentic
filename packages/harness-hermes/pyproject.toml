@@ -1,0 +1,16 @@
+[project]
+name = "agentic-harness-hermes"
+version = "0.0.0"
+description = "hermes-agent harness configs — presets validated by tests"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.8",
+    "pyyaml>=6.0",
+]
+
+[tool.ruff]
+line-length = 100

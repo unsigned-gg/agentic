@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}   # latest PR push wins; main runs to completion
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest    # GitHub-hosted: secret-safe + light. Heavy/private nodes move to self-hosted later.
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # moon --affected + the gitleaks diff need full history (shallow silently empties the diff)
+      - uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true  # installs proto + moon + the .prototools toolchains
+      - name: moon ci (affected only)
+        run: moon ci --base origin/${{ github.base_ref || github.event.repository.default_branch }}
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # The gitleaks GitHub Action (v2) is license-walled for orgs; the gitleaks
+      # CLI is MIT and free. Pin a version + scan full history (fetch-depth: 0).
+      - name: gitleaks (free CLI)
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          # Pinned SHA256 of gitleaks_8.30.1_linux_x64.tar.gz (out-of-band trust
+          # anchor; re-verify by hash per PARADIGMS.md — version strings forge).
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" -o gitleaks.tar.gz
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks git . --redact --no-banner --verbose
+# TODO(release piece): SHA-pin all actions; Dependabot keeps them current (PARADIGMS).

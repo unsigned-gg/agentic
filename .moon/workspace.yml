@@ -1,0 +1,10 @@
+$schema: 'https://moonrepo.dev/schemas/workspace.json'
+
+# agentic — packages/* are the only project roots (terrarium-federated node;
+# conventions per terrarium/.moon/workspace.yml, without the template layer).
+projects:
+  - 'packages/*'
+
+vcs:
+  client: 'git'
+  defaultBranch: 'main'

@@ -1,0 +1,15 @@
+{
+  "name": "@agentic/harness-pi",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "node --test",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "0.80.3",
+    "typescript": "5.7.2"
+  }
+}

@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/tasks.json'
+
+# Inherited ONLY by projects tagged 'python' (a node opts into gates by tag).
+inheritedBy:
+  tag: 'python'
+
+# ruff + pytest are provisioned per-node by uv from the node's pyproject.toml
+# (dev group), not globally — proto has no ruff plugin. `uv run` builds/reuses
+# the node's .venv and runs the tool inside it.
+tasks:
+  test: { command: 'uv run pytest' }
+  lint: { command: 'uv run ruff check' }
+  format: { command: 'uv run ruff format --check' }

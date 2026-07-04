@@ -1,0 +1,30 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": { "baseURL": "http://localhost:11434/v1" },
+      "models": {
+        "qwen3.6:27b": { "name": "Qwen 3.6 27B (local)" },
+        "devstral-small-2:24b": { "name": "Devstral Small 2 24B (local)" }
+      }
+    },
+    "llamacpp": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "llama.cpp server (local)",
+      "options": { "baseURL": "http://localhost:8080/v1" },
+      "models": {
+        "local": { "name": "llama.cpp served model" }
+      }
+    },
+    "vllm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "vLLM (local)",
+      "options": { "baseURL": "http://localhost:8000/v1" },
+      "models": {
+        "served-model": { "name": "vLLM served model" }
+      }
+    }
+  }
+}

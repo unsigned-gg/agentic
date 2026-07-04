@@ -1,0 +1,14 @@
+[changelog]
+header = "# Changelog\n\nKeep a Changelog + SemVer.\n"
+trim = true
+[git]
+conventional_commits = true
+filter_unconventional = true
+tag_pattern = "v[0-9]*"
+commit_parsers = [
+  { message = "^feat", group = "Added" },
+  { message = "^fix|^perf", group = "Fixed" },
+  { message = "^infra|^refactor|^build|^ci", group = "Changed" },
+  { message = "^security", group = "Security" },
+  { message = "^docs|^test|^chore|^style", skip = true },
+]
