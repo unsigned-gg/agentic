@@ -1,8 +1,11 @@
 $schema: 'https://moonrepo.dev/schemas/toolchains.json'
 
 # Toolchain versions come from .prototools (proto). moon manages the node
-# toolchain (lockfile/manifest hashing + pnpm integration). rust/python/go run
-# via proto-provided binaries inside the tag-task commands; enabling them as
-# moon-managed toolchains needs plugin locators — deferred (see RD-13 follow-ups).
+# toolchain; packageManager makes moon run `pnpm install` before node tasks —
+# without it CI has no node_modules and every tsc/lint task 127s (hit on the
+# first PR run). python runs via proto-provided uv inside tag-task commands.
 node:
   versionFromPrototools: 'node'
+  packageManager: 'pnpm'
+  pnpm:
+    versionFromPrototools: 'pnpm'
