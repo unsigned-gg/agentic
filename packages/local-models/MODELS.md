@@ -50,6 +50,25 @@ This tier is where the unsigned-paas GPU substrate (OPS-344 node sources)
 eventually serves the fleet — same OpenAI-compatible contract, so every
 harness preset in this repo works unchanged against a cluster endpoint.
 
+## Speculative decoding (verified 2026-07-04, RTX 5090 / ollama 0.31.1)
+
+Ollama's CUDA runner supports **draft-mtp only** — embedded-MTP GGUFs via
+`PARAMETER draft_num_predict`. Classic small-LM `DRAFT` pairings are rejected
+(`context type MTP requested but model doesn't contain MTP layers`), and the
+Gemma-4 `gemma4_assistant` drafter arch isn't in ollama's vendored engine yet
+(upstream llama.cpp has it — use `serve/serve-llamacpp.sh` for that pairing).
+
+Known-good recipe (68 → ~110 tok/s, +60%, acceptance ~0.55 / mean len 3.0):
+
+```
+FROM hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:UD-Q4_K_XL   # rev 5cb35eb3dcbf
+PARAMETER draft_num_predict 4
+```
+
+Per-position acceptance decays fast (0.77/0.56/0.39/0.28) — try
+`draft_num_predict 2-3` if verification overhead shows at higher batch.
+MoE MTP GGUFs (35B-A3B nextn) still fail to load: ollama/ollama#16282.
+
 ## Serving stack rules of thumb
 
 - **ollama** — zero-friction start; fine for T0/T1 single-user.
