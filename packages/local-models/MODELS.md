@@ -84,6 +84,7 @@ All UD-Q4_K_XL dynamic quants from unsloth, pulled via `hf.co/` refs.
 | GLM-4.7-Flash | 217 | ❌ emits clean calls but **corrupts tool results** (hallucinated file content 2/2 via ollama /v1) — do not use agentically as served; retry via llama.cpp `--jinja` | fastest banked |
 | Devstral Small 2 24B | 86 | ⚠️ tool-calls ✓; harness run untested (same cold-load timeout) | agent-tuned; no MTP |
 | Qwen3.5-9B-MTP (`qwen3.5-9b-mtp`) | 174 | ✅ full pi run passes (16s warm) | T0 utility/triage |
+| Gemma 4 E4B (`gemma4:latest`, pre-existing) | 209 | ✅ full pi run passes (20s) — fastest task completion | not in HF mirror; engine-upgrade beneficiary |
 
 Agentic verification 2026-07-04: wire-level = structured tool call + correct
 args + uses tool result (`/v1/chat/completions`); harness-level = pi 0.80.3
