@@ -77,13 +77,19 @@ Local bank in `~/.ollama`; private mirror **hf.co/todie/model-bank** holds the
 exact GGUFs + sha256s (canonical identity — upstream repos can mutate).
 All UD-Q4_K_XL dynamic quants from unsloth, pulled via `hf.co/` refs.
 
-| Model | tok/s | Notes |
-|---|---|---|
-| Qwen3.6-35B-A3B-MTP | 99 (58 plain) | T2 flagship; MTP +70%; needs load-timeout bump |
-| Qwen3.6-27B-MTP (`qwen3.6-27b-mtp`) | ~110 (68 plain) | dense T1 daily driver; MTP +60% |
-| GLM-4.7-Flash | 217 | fastest banked; agentic GLM small |
-| Devstral Small 2 24B | 86 | agent-tuned, best tool discipline; no MTP |
-| Qwen3.5-9B-MTP (`qwen3.5-9b-mtp`) | 174 | T0 utility/triage |
+| Model | tok/s | Agentic (verified) | Notes |
+|---|---|---|---|
+| Qwen3.6-35B-A3B-MTP | 99 (58 plain) | ⚠️ tool-calls ✓; harness run blocked by pi client timeout on cold load — pre-warm first | T2 flagship; MTP +70%; needs load-timeout bump |
+| Qwen3.6-27B-MTP (`qwen3.6-27b-mtp`) | ~110 (68 plain) | ✅ full pi run: write files → run test → pass | dense T1 daily driver; MTP +60% |
+| GLM-4.7-Flash | 217 | ❌ emits clean calls but **corrupts tool results** (hallucinated file content 2/2 via ollama /v1) — do not use agentically as served; retry via llama.cpp `--jinja` | fastest banked |
+| Devstral Small 2 24B | 86 | ⚠️ tool-calls ✓; harness run untested (same cold-load timeout) | agent-tuned; no MTP |
+| Qwen3.5-9B-MTP (`qwen3.5-9b-mtp`) | 174 | ✅ full pi run passes (16s warm) | T0 utility/triage |
+
+Agentic verification 2026-07-04: wire-level = structured tool call + correct
+args + uses tool result (`/v1/chat/completions`); harness-level = pi 0.80.3
+multi-step task (write fizzbuzz + test, execute, pass). Cold loads exceed pi's
+request timeout on 20GB+ models — warm the model (one dummy generate) before
+harness use.
 
 ## Serving stack rules of thumb
 

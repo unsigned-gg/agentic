@@ -5,8 +5,11 @@
       "api": "openai-completions",
       "apiKey": "ollama",
       "models": [
-        { "id": "qwen3.6:27b" },
-        { "id": "devstral-small-2:24b" }
+        { "id": "qwen3.6-27b-mtp", "contextWindow": 32768, "reasoning": true },
+        { "id": "qwen3.6-35b-mtp", "contextWindow": 32768, "reasoning": true },
+        { "id": "hf.co/unsloth/GLM-4.7-Flash-GGUF:UD-Q4_K_XL", "contextWindow": 32768, "reasoning": true },
+        { "id": "hf.co/unsloth/Devstral-Small-2-24B-Instruct-2512-GGUF:UD-Q4_K_XL", "contextWindow": 32768 },
+        { "id": "qwen3.5-9b-mtp", "contextWindow": 32768, "reasoning": true }
       ]
     },
     "llamacpp": {
