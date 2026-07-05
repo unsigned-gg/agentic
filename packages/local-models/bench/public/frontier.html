@@ -134,6 +134,37 @@
   footer { color: var(--muted); font-size: 12px; margin-top: 6px; }
   footer code { font-family: ui-monospace, monospace; font-size: 11.5px; }
   .loerr { color: var(--gold); font-size: 13px; }
+
+  /* provenance badges */
+  .vbadge {
+    font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.04em;
+    padding: 1px 7px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent;
+  }
+  .v-independent  { color: #0ca30c; border-color: rgba(12,163,12,0.45);  background: rgba(12,163,12,0.10); }
+  .v-corroborated { color: #2a78d6; border-color: rgba(42,120,214,0.45); background: rgba(42,120,214,0.10); }
+  .v-self         { color: #d84a4a; border-color: rgba(216,74,74,0.45);  background: rgba(216,74,74,0.10); }
+  .v-disputed     { color: var(--gold); border-color: var(--warn-bd);    background: var(--warn-bg); }
+
+  .legend-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 7px;
+  }
+  .legend-card .lg-title { font-size: 12.5px; font-weight: 620; margin-bottom: 2px; }
+  .legend-card .lg-keys { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .legend-card .lg-txt { font-size: 12.5px; color: var(--ink-2); }
+
+  th .vbadge { margin-top: 4px; display: inline-block; font-weight: 500; }
+  th .th-model { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+
+  #swe-pro td:last-child { white-space: normal; min-width: 260px; }
+
+  .why-list { display: flex; flex-direction: column; gap: 10px; }
+  .why-item { border-left: 3px solid var(--grid); padding: 4px 0 4px 12px; }
+  .why-item.hot { border-left-color: var(--gold); }
+  .why-item .wh-top { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .why-item .wh-name { font-weight: 620; font-size: 14px; }
+  .why-item .wh-star { color: var(--gold); }
+  .why-item .wh-why { font-size: 13px; color: var(--ink-2); line-height: 1.5; margin-top: 3px; }
 </style>
 
 </head><body>
@@ -150,10 +181,33 @@
   </header>
 
   <div class="callout">
-    🐡 <b>What is "Fugu"?</b> Excellent question. We do not know. It appeared in a
-    benchmark screenshot, swept the board, and left. Could be a frontier lab.
-    Could be a pufferfish that found a datacenter. Either way it's winning, so we
-    wrote it down. <b>Provenance: "trust me."</b>
+    🐡 <b>What is "Fugu"?</b> Turns out it's real: <b>Sakana AI's</b> Fugu Ultra,
+    launched June 2026. The catch — it's a <b>router over a pool of models, not a
+    single LLM</b>, so a big score can be great routing as much as raw ability.
+    And every number in this chart is <b>Sakana-reported</b> from a deck that
+    quietly omits Claude Mythos 5 (80.3) and Fable 5 (80.0) — the two models that
+    actually top SWE-bench Pro. <b>Provenance: the vendor.</b> Scroll down for the
+    independently-tracked board with the missing rows put back.
+  </div>
+
+  <div class="legend-card">
+    <div class="lg-title">How to read the provenance badges</div>
+    <div class="lg-keys">
+      <span class="vbadge v-independent">independent</span>
+      <span class="lg-txt">measured by a neutral third party (or by us, on our own 5090)</span>
+    </div>
+    <div class="lg-keys">
+      <span class="vbadge v-corroborated">corroborated</span>
+      <span class="lg-txt">vendor placed the number, but it matches an independent tracker</span>
+    </div>
+    <div class="lg-keys">
+      <span class="vbadge v-self">self-reported ⚠ COI</span>
+      <span class="lg-txt">reported by the model's own maker; conflict of interest, not reproduced</span>
+    </div>
+    <div class="lg-keys">
+      <span class="vbadge v-disputed">disputed</span>
+      <span class="lg-txt">independent sources contradict the label or the number</span>
+    </div>
   </div>
 
   <div class="tiles" id="tiles"></div>
@@ -176,15 +230,35 @@
   </div>
 
   <div class="card">
+    <h2>Same benchmark, independently tracked <span class="vbadge v-independent">independent</span></h2>
+    <p class="sub" id="swe-sub">SWE-bench Pro, from a neutral tracker — with the rows the vendor chart left out</p>
+    <div class="tbl-wrap">
+      <table id="swe-pro">
+        <thead><tr><th>model</th><th>SWE-bench Pro</th><th style="text-align:left">provenance</th></tr></thead>
+        <tbody id="swe-body"><tr><td class="loerr mono">loading the honest board…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="sub" id="swe-cite" style="margin-top:10px"></p>
+  </div>
+
+  <div class="card">
+    <h2>Which models are actually interesting</h2>
+    <p class="sub">not "who scored highest" — who's worth a second look, and why</p>
+    <div class="why-list" id="whylist"></div>
+  </div>
+
+  <div class="card">
     <h2>On the bench (literally)</h2>
     <p class="sub">candidates loitering near the hardware, waiting for the 5090 to form an opinion</p>
     <div class="cand" id="candidates"></div>
   </div>
 
   <footer id="footer">
-    Data: <code>public/data/frontier.json</code> · <code>public/data/candidates.json</code> ·
-    sourced from a screenshot pasted into a terminal at 23:45 on a Saturday.
-    No models were harmed; several were mildly embarrassed.
+    Data: <code>public/data/frontier.json</code> · <code>public/data/swe-pro.json</code> · <code>public/data/candidates.json</code><br>
+    Sources: frontier chart is <b>Sakana AI, vendor-reported</b> (June 2026) ·
+    independent SWE-bench Pro via <b>BenchLM.ai</b> (2026-07-04) ·
+    Intelligence Index via <b>Artificial Analysis</b> · Fugu reproduction caveats via <b>remoteopenclaw</b>.
+    No models were harmed; several were caught grading their own homework.
   </footer>
 </div>
 
@@ -226,6 +300,20 @@
 
   let FRONTIER = null;
 
+  const VBADGE = {
+    "independent":  { cls: "v-independent",  txt: "independent" },
+    "corroborated": { cls: "v-corroborated", txt: "corroborated" },
+    "self-reported":{ cls: "v-self",         txt: "self-reported ⚠" },
+    "disputed":     { cls: "v-disputed",     txt: "disputed" }
+  };
+  function badgeHTML(v) {
+    const b = VBADGE[v]; return b ? `<span class="vbadge ${b.cls}">${b.txt}</span>` : "";
+  }
+  const FLAG_TO_V = {
+    "independent": "independent", "self-reported": "self-reported",
+    "omitted-from-vendor-chart": "independent", "disputed": "disputed"
+  };
+
   function drawWins() {
     if (!FRONTIER) return;
     const { models, benchmarks } = FRONTIER;
@@ -256,8 +344,12 @@
   function renderTable() {
     if (!FRONTIER) return;
     const { models, benchmarks } = FRONTIER;
+    const src = FRONTIER.model_sources || {};
     const head = document.getElementById("lb-head");
-    head.innerHTML = "<th>benchmark</th>" + models.map(m => `<th>${m}</th>`).join("");
+    head.innerHTML = "<th>benchmark</th>" + models.map(m => {
+      const v = (src[m] && src[m].verification) || "";
+      return `<th><span class="th-model">${m}${badgeHTML(v)}</span></th>`;
+    }).join("");
     const body = document.getElementById("lb-body");
     body.innerHTML = benchmarks.map(b => {
       const cls = rank(b.scores);
@@ -301,9 +393,44 @@
         <div class="top">
           <span class="name">${c.name}</span>
           <span class="badge">${c.status || "candidate"}</span>
+          ${badgeHTML(c.verification)}
         </div>
         <div class="facts">${[c.params, c.context, c.license, c.repo + "@" + c.rev].filter(Boolean).join("  ·  ")}</div>
         <div class="quip">${c.quip || ""}</div>
+      </div>`).join("");
+  }
+
+  function renderSwePro(data) {
+    const body = document.getElementById("swe-body");
+    if (!data || !data.rows) { body.innerHTML = '<tr><td class="loerr mono">no independent board found.</td></tr>'; return; }
+    const max = Math.max(...data.rows.map(r => r.score));
+    body.innerHTML = data.rows.map(r => {
+      const v = FLAG_TO_V[r.flag] || "";
+      const win = r.score === max ? "win" : "";
+      const note = r.note ? ` <span class="dim">— ${r.note}</span>` : "";
+      return `<tr>
+        <td class="mono">${r.model}</td>
+        <td class="num ${win}">${r.score.toFixed(1)}</td>
+        <td style="text-align:left">${badgeHTML(v)}${note}</td>
+      </tr>`;
+    }).join("");
+    document.getElementById("swe-sub").textContent = data.note || "";
+    document.getElementById("swe-cite").innerHTML =
+      "Source: " + (data.source || "") + (data.url ? ` · <code>${data.url}</code>` : "") + " · as of " + (data.as_of || "");
+  }
+
+  function renderWhy() {
+    if (!FRONTIER) return;
+    const src = FRONTIER.model_sources || {};
+    const items = Object.keys(src).map(name => ({ name, ...src[name] }))
+      .sort((a, b) => (b.interesting === true) - (a.interesting === true));
+    document.getElementById("whylist").innerHTML = items.map(m => `
+      <div class="why-item ${m.interesting ? "hot" : ""}">
+        <div class="wh-top">
+          <span class="wh-name">${m.interesting ? '<span class="wh-star">★</span> ' : ""}${m.name}</span>
+          ${badgeHTML(m.verification)}
+        </div>
+        <div class="wh-why">${m.why || ""}</div>
       </div>`).join("");
   }
 
@@ -311,11 +438,12 @@
 
   Promise.all([
     fetch("data/frontier.json").then(r => r.json()),
-    fetch("data/candidates.json").then(r => r.json()).catch(() => null)
-  ]).then(([frontier, candidates]) => {
+    fetch("data/candidates.json").then(r => r.json()).catch(() => null),
+    fetch("data/swe-pro.json").then(r => r.json()).catch(() => null)
+  ]).then(([frontier, candidates, swe]) => {
     FRONTIER = frontier;
     document.getElementById("snap").textContent = frontier.snapshot || "";
-    renderTiles(); renderTable(); drawWins(); renderCandidates(candidates);
+    renderTiles(); renderTable(); drawWins(); renderWhy(); renderSwePro(swe); renderCandidates(candidates);
   }).catch(err => {
     document.getElementById("lb-body").innerHTML =
       '<tr><td class="loerr mono">the napkin is unreadable (' + err + '). the numbers were probably made up anyway.</td></tr>';
