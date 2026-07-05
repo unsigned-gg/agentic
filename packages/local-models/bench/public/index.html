@@ -112,12 +112,21 @@
   .dim { color: var(--muted); }
   .up { color: var(--delta-good); font-weight: 600; }
 
+  nav { display: flex; gap: 4px; font-family: ui-monospace, monospace; font-size: 12.5px; margin-bottom: 4px; }
+  nav a { color: var(--muted); text-decoration: none; padding: 4px 10px; border-radius: 7px; border: 1px solid transparent; }
+  nav a:hover { color: var(--ink); }
+  nav a[aria-current="page"] { color: var(--ink); border-color: var(--border); background: var(--surface); }
+
   footer { color: var(--muted); font-size: 12px; margin-top: 6px; }
   footer code { font-family: ui-monospace, monospace; font-size: 11.5px; }
 </style>
 
 </head><body>
 <div class="wrap">
+  <nav>
+    <a href="/" aria-current="page">local bank</a>
+    <a href="/frontier">frontier →</a>
+  </nav>
   <header>
     <p class="eyebrow">agentic / local-models</p>
     <h1>Model bank — bench metrics</h1>

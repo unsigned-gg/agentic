@@ -1,0 +1,21 @@
+{
+  "snapshot": "2026-07",
+  "source": "a screenshot pasted into a terminal at 23:45 on a Saturday",
+  "provenance": "unconfirmed — see the Fugu disclaimer",
+  "higher_is_better": true,
+  "models": ["Fugu-Ultra", "Fugu", "Opus 4.8", "Gemini 3.1", "GPT-5.5"],
+  "benchmarks": [
+    { "name": "SWE Bench Pro",          "scores": [73.7, 59.0, 69.2, 54.2, 58.6] },
+    { "name": "Terminal Bench 2.1",     "scores": [82.1, 80.2, 74.6, 70.3, 78.2] },
+    { "name": "LiveCodeBench",          "scores": [93.2, 92.9, 87.8, 88.5, 85.3] },
+    { "name": "LiveCodeBench Pro",      "scores": [90.8, 87.8, 84.8, 82.9, 88.4] },
+    { "name": "Humanity's Last Exam",   "scores": [50.0, 47.2, 49.8, 44.4, 41.4] },
+    { "name": "CharXiv Reasoning",      "scores": [86.6, 85.1, 84.2, 83.3, 84.1] },
+    { "name": "GPQA Diamond",           "scores": [95.5, 95.5, 92.0, 94.3, 93.6] },
+    { "name": "SciCode",                "scores": [58.7, 60.1, 53.5, 58.9, 56.1] },
+    { "name": "τ³ Banking",   "scores": [20.6, 21.7, 20.6, 8.4, 20.6] },
+    { "name": "Long Context Reasoning", "scores": [73.3, 74.7, 67.7, 72.7, 74.3] },
+    { "name": "MRCRv2",                 "scores": [93.6, 86.6, 87.9, 84.9, 94.8] },
+    { "name": "CTI-REALM",              "scores": [69.4, 67.5, 69.6, 56.0, 67.3] }
+  ]
+}

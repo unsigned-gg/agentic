@@ -20,9 +20,32 @@ Pin models by **exact HF revision** when you download — model repos mutate.
 |---|---|---|
 | Gemma 4 26B-A4B (quant Q4) | ollama / llama.cpp | MoE, small active params — best chat-per-GiB; adequate tools |
 | Qwen coder small variants | ollama | pick the largest that fits; coder tuning beats size at this tier |
+| Qwythos-9B (Claude-Mythos-5-1M) | vllm / sglang / llama.cpp | Qwen3.5-9B full-FT, 1M ctx (YaRN ×4), native fn-calling; uncensored. **Unverified on our HW.** See note below |
 
 Honest ceiling: fine for triage, boilerplate, and single-file edits; expect
 plan-loops on multi-step agent work.
+
+### Qwythos-9B — Claude-Mythos-5-1M (candidate, not yet banked)
+
+`empero-ai/Qwythos-9B-Claude-Mythos-5-1M` @ rev `763f72fc2c3b` (apache-2.0,
+un-gated, ~14 GB `model.safetensors`). Full-parameter fine-tune of Qwen3.5-9B on
+Claude Mythos/Fable traces (publisher's claim), pitched at uncensored
+cyber/biomed agentic use with a **1M-token** window (YaRN ×4 baked into
+`config.json`, native fn-calling per Qwen3.5 spec).
+
+Why it's here but flagged, not endorsed:
+
+- **Publisher claims, not our numbers.** The headline "+34 MMLU" leans on a base
+  Qwen3.5-9B scoring 0.232 MMLU — *below* 4-choice random (0.25), i.e. a broken
+  base eval that inflates the delta. Treat the eval table as marketing until we
+  re-run it. Tool-use demo (7/7) is plausible but self-reported.
+- **1M ctx is config, not validated** — card says smoke-tested to ~137k, not 1M.
+- **Uncensored + third-party "Claude" branding** — the name is Empero's, not an
+  Anthropic product. Fine as an open weight; just don't confuse lineage.
+
+Serve (once banked): `vllm serve empero-ai/Qwythos-9B-Claude-Mythos-5-1M
+--max-model-len 1010000`. To bank + mirror, pin this exact revision and add a
+verified row to the banked table after a real pi harness run.
 
 ## T1-single (20–30 GiB — one 24 GB GPU)
 
@@ -49,6 +72,34 @@ plan-loops on multi-step agent work.
 This tier is where the unsigned-paas GPU substrate (OPS-344 node sources)
 eventually serves the fleet — same OpenAI-compatible contract, so every
 harness preset in this repo works unchanged against a cluster endpoint.
+
+### Frontier reference (cloud, not local — the bar to beat)
+
+Not bankable here (proprietary / cloud-only), kept as the honest ceiling the
+local tiers are measured against. When a T3/T4 open-weight row lands near these,
+it earns the cloud-burst default. Snapshot 2026-07 (**bold** = row winner,
+_underline_ = runner-up):
+
+| Benchmark | Fugu-Ultra | Fugu | Opus 4.8 | Gemini 3.1 | GPT-5.5 |
+|---|--:|--:|--:|--:|--:|
+| SWE Bench Pro | **73.7** | 59.0 | _69.2_ | 54.2 | 58.6 |
+| Terminal Bench 2.1 | **82.1** | _80.2_ | 74.6 | 70.3 | 78.2 |
+| LiveCodeBench | **93.2** | _92.9_ | 87.8 | 88.5 | 85.3 |
+| LiveCodeBench Pro | **90.8** | 87.8 | 84.8 | 82.9 | _88.4_ |
+| Humanity's Last Exam | **50.0** | 47.2 | _49.8_ | 44.4 | 41.4 |
+| CharXiv Reasoning | **86.6** | _85.1_ | 84.2 | 83.3 | 84.1 |
+| GPQA Diamond | **95.5** | **95.5** | 92.0 | _94.3_ | 93.6 |
+| SciCode | 58.7 | **60.1** | 53.5 | _58.9_ | 56.1 |
+| τ³ Banking | _20.6_ | **21.7** | _20.6_ | 8.4 | _20.6_ |
+| Long Context Reasoning | 73.3 | **74.7** | 67.7 | 72.7 | _74.3_ |
+| MRCRv2 | _93.6_ | 86.6 | 87.9 | 84.9 | **94.8** |
+| CTI-REALM | _69.4_ | 67.5 | **69.6** | 56.0 | 67.3 |
+
+Read: Fugu-Ultra sweeps coding/agentic/reasoning (7 outright wins); the two Fugu
+variants together lead 11 of 12 rows. Opus 4.8 wins CTI-REALM only; GPT-5.5 wins
+MRCRv2 only; Gemini 3.1 wins none and floors τ³ Banking (8.4). Lineage of the
+"Fugu" rows is unconfirmed — treat as a published-numbers snapshot pending a
+sourced provenance check.
 
 ## Speculative decoding (verified 2026-07-04, RTX 5090 / ollama 0.31.1)
 
