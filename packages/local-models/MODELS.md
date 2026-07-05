@@ -78,7 +78,16 @@ harness preset in this repo works unchanged against a cluster endpoint.
 Not bankable here (proprietary / cloud-only), kept as the honest ceiling the
 local tiers are measured against. When a T3/T4 open-weight row lands near these,
 it earns the cloud-burst default. Snapshot 2026-07 (**bold** = row winner,
-_underline_ = runner-up):
+_underline_ = runner-up).
+
+**Provenance (important):** this table is a **Sakana AI marketing chart** from
+the Fugu launch (June 2026) — vendor-reported, and it omits Claude Mythos 5
+(80.3) and Fable 5 (80.0), which actually top SWE-bench Pro. Fugu Ultra is a
+*router over a model pool*, not a single LLM, and its numbers were not reproduced
+by neutral testers. Opus 4.8 (69.2) and GPT-5.5 (58.6) corroborate against
+independent trackers (BenchLM.ai, Artificial Analysis); the "Gemini 3.1" column
+is disputed (independent boards list Gemini 3.5 Flash, not 3.1). See the
+per-model provenance badges at **bench.unsigned.gg/frontier**.
 
 | Benchmark | Fugu-Ultra | Fugu | Opus 4.8 | Gemini 3.1 | GPT-5.5 |
 |---|--:|--:|--:|--:|--:|
@@ -95,11 +104,12 @@ _underline_ = runner-up):
 | MRCRv2 | _93.6_ | 86.6 | 87.9 | 84.9 | **94.8** |
 | CTI-REALM | _69.4_ | 67.5 | **69.6** | 56.0 | 67.3 |
 
-Read: Fugu-Ultra sweeps coding/agentic/reasoning (7 outright wins); the two Fugu
-variants together lead 11 of 12 rows. Opus 4.8 wins CTI-REALM only; GPT-5.5 wins
-MRCRv2 only; Gemini 3.1 wins none and floors τ³ Banking (8.4). Lineage of the
-"Fugu" rows is unconfirmed — treat as a published-numbers snapshot pending a
-sourced provenance check.
+Read: in Sakana's framing Fugu-Ultra sweeps (7 wins) and the two Fugu variants
+lead 11 of 12 rows — but that's the maker grading its own homework with the two
+models that beat it left off the chart. On the independently-tracked SWE-bench
+Pro board the order is Mythos 5 (80.3) > Fable 5 (80.0) > Fugu Ultra (73.7) >
+Opus 4.8 (69.2) > GPT-5.5 (58.6). Treat vendor rows as self-reported until
+reproduced.
 
 ## Speculative decoding (verified 2026-07-04, RTX 5090 / ollama 0.31.1)
 
