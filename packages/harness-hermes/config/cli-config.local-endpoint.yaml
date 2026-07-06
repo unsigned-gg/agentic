@@ -21,6 +21,20 @@ providers:
       - gemma4:latest       # verified agentic (pi harness pass)
       - qwen3.6-35b-mtp     # tool-calls ok; pre-warm before harness use (cold load > client timeout)
 
+  # neuralwatt — the SHARED hosted model-gateway on the cluster (LiteLLM →
+  # Crusoe/GLM-5.2 + NeuralWatt Cloud). Not local: needs a per-consumer virtual
+  # key issued by the gateway (set api_key to that key, or NEURALWATT_API_KEY).
+  neuralwatt:
+    name: neuralwatt (hosted GLM-5.2 gateway)
+    api: https://neuralwatt.dev.unsigned.gg/v1
+    api_key: env:NEURALWATT_API_KEY
+    default_model: zai/GLM-5.2
+    models:
+      - zai/GLM-5.2                            # literal GLM-5.2, hosted
+      - deepseek-ai/DeepSeek-V4-Pro
+      - Qwen/Qwen3-235B-A22B-Instruct-2507
+      - moonshotai/Kimi-K2.6
+
 # Alternate local endpoints (swap `api`):
 #   llama.cpp: http://localhost:8080/v1   (serve/serve-llamacpp.sh)
 #   vLLM:      http://localhost:8000/v1   (serve/serve-vllm.sh)

@@ -1,5 +1,16 @@
 {
   "providers": {
+    "neuralwatt": {
+      "baseUrl": "https://neuralwatt.dev.unsigned.gg/v1",
+      "api": "openai-completions",
+      "apiKey": "env:NEURALWATT_API_KEY",
+      "models": [
+        { "id": "zai/GLM-5.2", "contextWindow": 200000, "reasoning": true },
+        { "id": "deepseek-ai/DeepSeek-V4-Pro", "contextWindow": 131072, "reasoning": true },
+        { "id": "Qwen/Qwen3-235B-A22B-Instruct-2507", "contextWindow": 262144 },
+        { "id": "moonshotai/Kimi-K2.6", "contextWindow": 131072 }
+      ]
+    },
     "ollama": {
       "baseUrl": "http://localhost:11434/v1",
       "api": "openai-completions",
