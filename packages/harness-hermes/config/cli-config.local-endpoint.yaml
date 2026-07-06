@@ -1,13 +1,40 @@
-# hermes-agent preset: local OpenAI-compatible endpoint as the model provider.
-# Ports match the pi/opencode presets and packages/local-models/serve configs:
-#   ollama :11434 · llama.cpp :8080 · vLLM :8000
-# Verify keys against `hermes config list` for your installed version —
-# treat this file as a starting point, not gospel (see package README).
-# No secrets here: local endpoints don't need real API keys.
+# hermes-agent preset: local ollama as the model provider (v12 providers schema).
+# Verified against hermes-agent 0.18.0 on 2026-07-05 — this file's keys mirror
+# the REAL config at ~/.hermes/config.yaml (`hermes config path`), NOT a
+# standalone cli-config; merge these keys into that file.
+# Model ids must exist in `ollama list` — see packages/local-models/MODELS.md
+# banked table for the verified set. No secrets: local endpoints need none.
 
-model_provider: openai
-openai_base_url: "http://localhost:8000/v1"
-openai_api_key: "none"
-# The model id must match what the server actually serves — see
-# packages/local-models/MODELS.md for the tier matrix.
-model: "served-model"
+model:
+  default: qwen3.6-27b-mtp
+  provider: ollama
+
+providers:
+  ollama:
+    name: Ollama (local)
+    api: http://localhost:11434/v1
+    api_key: ollama
+    default_model: qwen3.6-27b-mtp
+    models:
+      - qwen3.6-27b-mtp     # verified agentic (pi harness pass)
+      - qwen3.5-9b-mtp      # verified agentic (pi harness pass)
+      - gemma4:latest       # verified agentic (pi harness pass)
+      - qwen3.6-35b-mtp     # tool-calls ok; pre-warm before harness use (cold load > client timeout)
+
+  # neuralwatt — the SHARED hosted model-gateway on the cluster (LiteLLM →
+  # Crusoe/GLM-5.2 + NeuralWatt Cloud). Not local: needs a per-consumer virtual
+  # key issued by the gateway (set api_key to that key, or NEURALWATT_API_KEY).
+  neuralwatt:
+    name: neuralwatt (hosted GLM-5.2 gateway)
+    api: https://neuralwatt.dev.unsigned.gg/v1
+    api_key: env:NEURALWATT_API_KEY
+    default_model: zai/GLM-5.2
+    models:
+      - zai/GLM-5.2                            # literal GLM-5.2, hosted
+      - deepseek-ai/DeepSeek-V4-Pro
+      - Qwen/Qwen3-235B-A22B-Instruct-2507
+      - moonshotai/Kimi-K2.6
+
+# Alternate local endpoints (swap `api`):
+#   llama.cpp: http://localhost:8080/v1   (serve/serve-llamacpp.sh)
+#   vLLM:      http://localhost:8000/v1   (serve/serve-vllm.sh)
