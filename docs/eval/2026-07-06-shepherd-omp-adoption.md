@@ -28,14 +28,15 @@ section absorb; that is the same posture the repo already takes toward its
 harnesses. Driving pi/omp as shepherd's executor is explicitly **out of scope**:
 the retained-run executor lane is not pluggable (detail below).
 
-**omp: watch, don't adopt yet.** It is a genuinely capable fork (RPC/headless
-modes, LSP-wired edits, first-class subagents, agentskills.io skills), but
-adoption costs a new runtime toolchain (Bun ≥ 1.3.14, not in `.prototools`), its
-release cadence (multiple releases per day) works against the curated-known-good
-charter, and it is not config-compatible with the pinned pi harness — it is a
-fourth harness, not a pi variant. Re-evaluate when the release cadence settles or
-when Bun enters the toolchain for another reason. Concrete adoption checklist
-below so the decision is cheap to revisit.
+**omp: watch, don't adopt yet** — *overridden by operator decision (see
+Decisions below): adopt now.* The evaluation's reservations stand as the risk
+record: adoption costs a new runtime toolchain (Bun ≥ 1.3.14, not previously in
+`.prototools`), the release cadence (multiple releases per day) works against
+the curated-known-good charter, and it is not config-compatible with the pinned
+pi harness — it is a fourth harness, not a pi variant. The capability case (RPC/
+headless modes, LSP-wired edits, first-class subagents, agentskills.io skills)
+carried the decision; the pin-churn posture (deliberate bumps, trailing latest)
+is the mitigation.
 
 ## omp as a fourth harness
 
@@ -154,17 +155,15 @@ shape — this host uses `ANTHROPIC_API_KEY`, which doctor validates).
 | Upstream cadence vs curation | alpha but slow (v0.2.1) | multiple releases/day |
 | Verified locally | doctor 8/8 + offline demo green | not exercised (Bun absent) |
 
-## Open decisions
+## Decisions (operator interview, 2026-07-06)
 
-To be interviewed after review:
-
-1. Proceed with `packages/shepherd/` implementation PR now, or park until a
-   concrete supervised-run use case lands?
-2. omp: park with checklist (recommended) or adopt now including the Bun
-   toolchain addition?
-3. If shepherd is adopted: is a jailed live-claude smoke (needs auth, spends
-   tokens) part of the package's Verified bar, or is the keyless
-   static-provider demo sufficient for CI?
+1. `packages/shepherd/` implementation: **proceed now** (delivered as its own
+   PR: pinned install, README runbook, pin-drift tests).
+2. omp: **adopt now**, including the Bun 1.3.14 `.prototools` addition
+   (delivered as `packages/harness-omp/` in its own PR; eval reservations
+   retained above as the risk record).
+3. shepherd Verified bar: **includes the jailed live-claude smoke**, not just
+   the keyless static demo (result recorded in the appendix).
 
 ## Verification appendix
 
@@ -181,6 +180,15 @@ Verified **live on this host** (2026-07-06, WSL2 6.6.87.2-microsoft-standard-WSL
 - Offline quickstart (`shepherd demo write quickstart`, static provider,
   keyless): run `retained`, changeset listed `SHEPHERD_QUICKSTART.txt`,
   settled `released`.
+- Jailed live-claude smoke (`shepherd demo write agent-task`): agent ran in
+  the Landlock jail, `donut.py` retained (nothing applied), changeset read
+  back, settled `discard`. One operational caveat: a demo run crashed
+  mid-flight (wrong interpreter) left that workspace `readiness blocked` for
+  subsequent runs; a fresh `shepherd init` directory cleared it.
+- omp installed at 16.3.11 via `bun install -g` (bun 1.3.14 from proto pin):
+  `omp --version` → `omp/16.3.11`; `models.yml` preset seeded. Bun blocked
+  two dependency postinstalls (`onnxruntime-node`, `protobufjs`) under its
+  default trust model — core CLI unaffected.
 
 From **source reading** (not executed): omp headless/RPC flags, config
 resolution order, skills/extension mechanisms, robomp architecture
