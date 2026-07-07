@@ -6,8 +6,9 @@ shared agentskills.io skills, local-model bootstrap. Terrarium-federated
 
 ## Layout
 
-- `packages/harness-{pi,opencode,hermes}/` — per-harness install script, config
-  presets, extensions/plugins, README. One package per harness, no cross-deps.
+- `packages/harness-{pi,opencode,hermes,omp}/` — per-harness install script,
+  config presets, extensions/plugins, README. One package per harness, no
+  cross-deps.
 - `packages/skills/` — shared Agent Skills; `install.sh` symlinks into every
   harness's skills dir. Skills follow agentskills.io (SKILL.md frontmatter).
 - `packages/local-models/` — `probe.sh` (hardware tier), `serve/` (llama.cpp /
@@ -33,4 +34,5 @@ moon tag-node tasks; python: uv via tag-python. Shell: shellcheck (CI + lint).
 
 Harness pins are bumped deliberately (PR per bump, changelog reviewed) — this
 repo's value is *curated known-good*, not latest. Current: pi-coding-agent
-0.80.3 · opencode-ai 1.17.13 · hermes-agent 0.18.0.
+0.80.3 · opencode-ai 1.17.13 · hermes-agent 0.18.0 ·
+@oh-my-pi/pi-coding-agent 16.3.11 (bun).

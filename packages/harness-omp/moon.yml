@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'tool'
+
+project:
+  name: 'harness-omp'
+  description: 'oh-my-pi (omp) harness — install, models.yml local-endpoint presets'
+
+tasks:
+  lint:
+    command: 'shellcheck install.sh'
+    inputs:
+      - 'install.sh'
