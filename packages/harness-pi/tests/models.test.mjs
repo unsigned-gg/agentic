@@ -13,7 +13,7 @@ const install = readFileSync(join(PKG, "install.sh"), "utf8");
 const readme = readFileSync(join(PKG, "README.md"), "utf8");
 
 const SECRETY = ["sk-", "Bearer", "ghp_", "AKIA"];
-const ALLOWLIST = [/^http:\/\/localhost[:/]/, /^http:\/\/127\.0\.0\.1[:/]/, /^https:\/\/neuralwatt\.dev\.unsigned\.gg\//];
+const ALLOWLIST = [/^http:\/\/localhost[:/]/, /^http:\/\/127\.0\.0\.1[:/]/, /^https:\/\/llm\.unsigned\.gg\//];
 
 test("models.json parses to a providers mapping", () => {
   const doc = JSON.parse(raw);

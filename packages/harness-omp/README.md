@@ -34,8 +34,14 @@ are maintained separately.
 ## What you get
 
 - **`config/models.yml`** → seeded to `~/.omp/agent/models.yml` if absent:
-  the same endpoints as harness-pi's `models.json` (neuralwatt gateway,
-  ollama :11434, llama.cpp :8080, vLLM :8000) in omp's provider schema.
+  the same endpoints as harness-pi's `models.json` (the `llm` unsigned model
+  gateway at llm.unsigned.gg — Crusoe/OpenRouter/Anthropic/MorphLLM upstreams,
+  key via `UNSIGNED_LLM_API_KEY`, 1P item `unsigned-llm` — plus ollama :11434,
+  llama.cpp :8080, vLLM :8000) in omp's provider schema. **Rename note
+  (2026-07-07):** the gateway provider was `neuralwatt`; presets are
+  copy-if-absent, so an existing `~/.omp/agent/models.yml` keeps the old
+  name — hand-merge the `llm` block (the old hostname keeps working through
+  the deprecation window).
   `apiKey` values are env-var names (resolved env-first, then literal) — no
   secrets in the preset. **Schema caveat:** validated against the
   `models-config-schema.ts` shipped in v16.3.11; upstream releases multiple
@@ -105,13 +111,13 @@ CI-gated: shellcheck on `install.sh`. Exercised live (2026-07-06, WSL2):
   (default tools/skills) exceeds 32k local context — see the context caveat
   above.
 
-- Full-harness neuralwatt round-trip (2026-07-06): `omp -p
-  --model=neuralwatt/GLM-5.2 --yolo` with the default 39k harness wrote,
-  executed, and self-verified a 193-line Python animation end-to-end through
-  the gateway. Required the preset's `compat.supportsStore: false` (Crusoe
-  403s the OpenAI `store` param) and a one-time virtual-key seed on the
-  gateway (`/key/generate` with the master key — fresh gateway DBs ship with
-  an empty token table).
+- Full-harness gateway round-trip (2026-07-06, under the pre-rename
+  `neuralwatt` provider key; today: `omp -p --model=llm/GLM-5.2`): the default
+  39k harness wrote, executed, and self-verified a 193-line Python animation
+  end-to-end through the gateway. Required the preset's
+  `compat.supportsStore: false` (Crusoe 403s the OpenAI `store` param) and a
+  one-time virtual-key seed on the gateway — now automated by the chart's
+  PostSync seed Job (OPS-438).
 
 Needs live exercise per-host: skills discovery after running
 `packages/skills/install.sh`.
