@@ -8,6 +8,14 @@ project:
 
 tasks:
   lint:
-    command: 'shellcheck install.sh'
+    command: 'shellcheck install.sh tools/measure-context.sh'
     inputs:
       - 'install.sh'
+      - 'tools/*.sh'
+  test:
+    command: 'bun test'
+    inputs:
+      - 'tests/**/*'
+      - 'config/**/*'
+      - 'install.sh'
+      - 'README.md'

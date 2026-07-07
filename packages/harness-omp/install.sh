@@ -27,4 +27,13 @@ if [ ! -f "${HOME}/.omp/agent/models.yml" ]; then
 else
   echo "${HOME}/.omp/agent/models.yml exists — NOT overwritten. Presets: ${PKG_DIR}/config/"
 fi
+
+# Settings preset (local-model profile): slims the ~39k default request
+# footprint to ~11k so local 32k-context models fit. Same never-clobber rule.
+if [ ! -f "${HOME}/.omp/agent/config.yml" ]; then
+  cp "${PKG_DIR}/config/config.local.yml" "${HOME}/.omp/agent/config.yml"
+  echo "installed local-model profile -> ~/.omp/agent/config.yml"
+else
+  echo "${HOME}/.omp/agent/config.yml exists — NOT overwritten. Presets: ${PKG_DIR}/config/"
+fi
 echo "oh-my-pi ${OMP_VERSION} ready"
