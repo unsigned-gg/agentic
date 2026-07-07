@@ -1,0 +1,55 @@
+# omp custom providers — same endpoints as harness-pi's models.json, expressed
+# in omp's models.yml schema (packages/coding-agent/src/config/models-config-schema.ts
+# @ v16.3.11). apiKey values are resolved env-var-name-first, then literal
+# (resolve-config-value.ts) — no secrets live in this file.
+providers:
+  neuralwatt:
+    baseUrl: https://neuralwatt.dev.unsigned.gg/v1
+    api: openai-completions
+    apiKey: NEURALWATT_API_KEY
+    models:
+      - id: zai/GLM-5.2
+        contextWindow: 200000
+        reasoning: true
+      - id: deepseek-ai/DeepSeek-V4-Pro
+        contextWindow: 131072
+        reasoning: true
+      - id: Qwen/Qwen3-235B-A22B-Instruct-2507
+        contextWindow: 262144
+      - id: moonshotai/Kimi-K2.6
+        contextWindow: 131072
+  ollama:
+    baseUrl: http://localhost:11434/v1
+    api: openai-completions
+    apiKey: ollama
+    discovery:
+      type: ollama
+    models:
+      - id: qwen3.6-27b-mtp
+        contextWindow: 32768
+        reasoning: true
+      - id: qwen3.6-35b-mtp
+        contextWindow: 32768
+        reasoning: true
+      - id: hf.co/unsloth/GLM-4.7-Flash-GGUF:UD-Q4_K_XL
+        contextWindow: 32768
+        reasoning: true
+      - id: hf.co/unsloth/Devstral-Small-2-24B-Instruct-2512-GGUF:UD-Q4_K_XL
+        contextWindow: 32768
+      - id: qwen3.5-9b-mtp
+        contextWindow: 32768
+        reasoning: true
+  llamacpp:
+    baseUrl: http://localhost:8080/v1
+    api: openai-completions
+    auth: none
+    discovery:
+      type: llama.cpp
+    models:
+      - id: local
+  vllm:
+    baseUrl: http://localhost:8000/v1
+    api: openai-completions
+    auth: none
+    models:
+      - id: served-model

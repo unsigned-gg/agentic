@@ -2,6 +2,7 @@
 # (terrarium/.prototools @ 2026-06-15 pins; rust/go omitted — no such packages here).
 node = "22.12.0"
 pnpm = "9.15.0"
+bun = "1.3.14"        # oh-my-pi (harness-omp) runtime; matches its engines.bun minimum
 python = "3.13.1"
 uv = "0.11.17"        # python env/runner; provides ruff+pytest per-node via `uv run`
 moon = "2.2.6"

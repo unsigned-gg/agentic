@@ -6,6 +6,7 @@
 #   pi          ~/.pi/agent/skills/
 #   opencode    ~/.config/opencode/skills/
 #   hermes      ~/.hermes/skills/
+#   omp         ~/.omp/agent/skills/
 #   agents-std  ~/.agents/skills/        (Claude Code + anything reading the
 #                                         cross-harness convention dir)
 set -euo pipefail
@@ -15,6 +16,7 @@ TARGETS=(
   "${HOME}/.pi/agent/skills"
   "${HOME}/.config/opencode/skills"
   "${HOME}/.hermes/skills"
+  "${HOME}/.omp/agent/skills"
   "${HOME}/.agents/skills"
 )
 
