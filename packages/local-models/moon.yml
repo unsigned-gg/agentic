@@ -8,7 +8,7 @@ project:
 
 tasks:
   lint:
-    command: 'shellcheck probe.sh serve/serve-llamacpp.sh serve/serve-vllm.sh'
+    command: 'shellcheck probe.sh serve/serve-llamacpp.sh serve/serve-vllm.sh serve/serve-ollama.sh'
     inputs:
       - 'probe.sh'
       - 'serve/*.sh'

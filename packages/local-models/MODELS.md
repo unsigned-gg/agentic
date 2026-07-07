@@ -155,14 +155,29 @@ harness use.
 
 ## Serving stack rules of thumb
 
-- **ollama** — zero-friction start; fine for T0/T1 single-user.
+- **ollama** (`serve/serve-ollama.sh`) — zero-friction start; fine for T0/T1
+  single-user. The script serves at 64k context (ollama's own default is
+  32k — modern agent harnesses overflow that before the first user word;
+  omp's default footprint alone measured ~39k tokens, see
+  `harness-omp/README`).
 - **llama.cpp** (`serve/serve-llamacpp.sh`) — full control, GGUF quants,
   `--jinja` for native tool calls.
 - **vLLM** (`serve/serve-vllm.sh`) — production path: throughput, concurrent
   harness sessions, `--enable-auto-tool-choice`.
-- Context ≥32k always (agent sessions overflow chat defaults); quant floor
-  ~Q4 — tool-call reliability degrades below it before chat quality does
-  (see `packages/skills/local-model-triage`).
+- Context ≥32k always (agent sessions overflow chat defaults) and 64k for
+  full-harness omp; quant floor ~Q4 — tool-call reliability degrades below
+  it before chat quality does (see `packages/skills/local-model-triage`).
+
+### 64k-context verification (RTX 5090 32GB, 2026-07-07, ollama 0.31.1)
+
+Served via `serve-ollama.sh 65536` (`OLLAMA_CONTEXT_LENGTH`; no banked
+Modelfile pins `num_ctx`, deliberately, so the env knob governs them all):
+
+| Model | VRAM @ 64k | Verified |
+|---|---|---|
+| qwen3.6-27b-mtp | 30.1 / 32.6 GB (18 GB weights + KV) | ✅ full-harness omp (default ~39k-token config) → completes |
+| qwen3.5-9b-mtp | 17.3 GB | ✅ completion round-trip |
+| qwen3.6-35b-mtp | not measured | 32k assumed — verify before bumping its preset contextWindow |
 
 Sources for the July-2026 rankings: [LiveBench/AA indices via huggingface.co
 open-LLM roundups](https://huggingface.co/blog/daya-shankar/open-source-llms),
