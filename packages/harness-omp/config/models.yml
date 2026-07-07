@@ -29,8 +29,11 @@ providers:
     discovery:
       type: ollama
     models:
+      # 65536 = verified live at 64k via serve-ollama.sh (MODELS.md); models
+      # left at 32768 are unverified at 64k — may not fit in VRAM there
+      # (KV cache grows with context); see MODELS.md before bumping
       - id: qwen3.6-27b-mtp
-        contextWindow: 32768
+        contextWindow: 65536
         reasoning: true
       - id: qwen3.6-35b-mtp
         contextWindow: 32768
@@ -41,7 +44,7 @@ providers:
       - id: hf.co/unsloth/Devstral-Small-2-24B-Instruct-2512-GGUF:UD-Q4_K_XL
         contextWindow: 32768
       - id: qwen3.5-9b-mtp
-        contextWindow: 32768
+        contextWindow: 65536
         reasoning: true
   llamacpp:
     baseUrl: http://localhost:8080/v1
