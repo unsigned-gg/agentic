@@ -164,9 +164,12 @@ harness use.
   `--jinja` for native tool calls.
 - **vLLM** (`serve/serve-vllm.sh`) — production path: throughput, concurrent
   harness sessions, `--enable-auto-tool-choice`.
-- Context ≥32k always (agent sessions overflow chat defaults) and 64k for
-  full-harness omp; quant floor ~Q4 — tool-call reliability degrades below
-  it before chat quality does (see `packages/skills/local-model-triage`).
+- Context ≥32k always (agent sessions overflow chat defaults); 64k for
+  full-harness omp **on ≥32GB hardware only** — KV cache at 64k puts the 27B
+  at 30.1GB total, past any 24GB card (see the verification table below
+  before assuming your tier fits). Quant floor ~Q4 — tool-call reliability
+  degrades below it before chat quality does
+  (see `packages/skills/local-model-triage`).
 
 ### 64k-context verification (RTX 5090 32GB, 2026-07-07, ollama 0.31.1)
 

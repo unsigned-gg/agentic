@@ -30,7 +30,8 @@ providers:
       type: ollama
     models:
       # 65536 = verified live at 64k via serve-ollama.sh (MODELS.md); models
-      # left at 32768 are unverified at 64k, not incapable
+      # left at 32768 are unverified at 64k — may not fit in VRAM there
+      # (KV cache grows with context); see MODELS.md before bumping
       - id: qwen3.6-27b-mtp
         contextWindow: 65536
         reasoning: true

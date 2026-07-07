@@ -37,5 +37,8 @@ diagnosis path (serving config vs model tier vs harness wiring).
 Chat-default serving breaks agents. The scripts bake in the two invariants:
 **context ≥32k** and **native tool-call templating** (`--jinja` for llama.cpp,
 `--enable-auto-tool-choice --tool-call-parser <family>` for vLLM). ollama
-users: set `num_ctx` ≥32768 in a Modelfile — its default will silently
-truncate agent sessions.
+users: serve via `serve/serve-ollama.sh` — it sets the daemon-wide
+`OLLAMA_CONTEXT_LENGTH` (banked Modelfiles deliberately don't pin `num_ctx`,
+so one knob governs all; ollama's own default silently truncates agent
+sessions). ollama itself is installed per charter: pinned release tarball,
+sha256-verified, userspace (`~/.local/bin/ollama`) — never `curl | sh`.
