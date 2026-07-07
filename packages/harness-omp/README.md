@@ -76,5 +76,13 @@ CI-gated: shellcheck on `install.sh`. Exercised live (2026-07-06, WSL2):
   (default tools/skills) exceeds 32k local context — see the context caveat
   above.
 
-Needs live exercise per-host: neuralwatt round-trip (`NEURALWATT_API_KEY`
-set) and skills discovery after running `packages/skills/install.sh`.
+- Full-harness neuralwatt round-trip (2026-07-06): `omp -p
+  --model=neuralwatt/GLM-5.2 --yolo` with the default 39k harness wrote,
+  executed, and self-verified a 193-line Python animation end-to-end through
+  the gateway. Required the preset's `compat.supportsStore: false` (Crusoe
+  403s the OpenAI `store` param) and a one-time virtual-key seed on the
+  gateway (`/key/generate` with the master key — fresh gateway DBs ship with
+  an empty token table).
+
+Needs live exercise per-host: skills discovery after running
+`packages/skills/install.sh`.

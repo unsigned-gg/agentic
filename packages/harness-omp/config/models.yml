@@ -7,6 +7,10 @@ providers:
     baseUrl: https://neuralwatt.dev.unsigned.gg/v1
     api: openai-completions
     apiKey: NEURALWATT_API_KEY
+    compat:
+      # Crusoe upstream 403s OpenAI-only params (verified live 2026-07-06:
+      # "Request blocked: parameter 'store' is not allowed")
+      supportsStore: false
     models:
       - id: zai/GLM-5.2
         contextWindow: 200000
