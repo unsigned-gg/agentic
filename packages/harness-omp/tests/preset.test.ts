@@ -12,7 +12,7 @@ const README = readFileSync(join(PKG, "README.md"), "utf8");
 
 // secret-shaped needles (mirrors harness-hermes tests/test_presets.py)
 const SECRETY = ["sk-", "Bearer", "ghp_", "AKIA"];
-const ENDPOINT_ALLOWLIST = [/^http:\/\/localhost[:/]/, /^http:\/\/127\.0\.0\.1[:/]/, /^https:\/\/neuralwatt\.dev\.unsigned\.gg\//];
+const ENDPOINT_ALLOWLIST = [/^http:\/\/localhost[:/]/, /^http:\/\/127\.0\.0\.1[:/]/, /^https:\/\/llm\.unsigned\.gg\//];
 
 // BUILTIN_TOOL_NAMES from oh-my-pi v16.3.11
 // packages/coding-agent/src/tools/builtin-names.ts — re-check on pin bump.

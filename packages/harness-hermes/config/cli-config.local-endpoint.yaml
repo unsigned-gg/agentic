@@ -21,19 +21,30 @@ providers:
       - gemma4:latest       # verified agentic (pi harness pass)
       - qwen3.6-35b-mtp     # tool-calls ok; pre-warm before harness use (cold load > client timeout)
 
-  # neuralwatt — the SHARED hosted model-gateway on the cluster (LiteLLM →
-  # Crusoe/GLM-5.2 + NeuralWatt Cloud). Not local: needs a per-consumer virtual
-  # key issued by the gateway (set api_key to that key, or NEURALWATT_API_KEY).
-  neuralwatt:
-    name: neuralwatt (hosted GLM-5.2 gateway)
-    api: https://neuralwatt.dev.unsigned.gg/v1
-    api_key: env:NEURALWATT_API_KEY
+  # llm — the SHARED hosted model-gateway on the cluster (LiteLLM; renamed
+  # from "neuralwatt" — that name now refers only to one upstream vendor).
+  # Upstreams: Crusoe, OpenRouter, Anthropic (direct), MorphLLM. Not local:
+  # needs the shared virtual key (set api_key to it, or UNSIGNED_LLM_API_KEY;
+  # 1P item: unsigned-llm).
+  llm:
+    name: llm (unsigned model gateway)
+    api: https://llm.unsigned.gg/v1
+    api_key: env:UNSIGNED_LLM_API_KEY
     default_model: zai/GLM-5.2
     models:
-      - zai/GLM-5.2                            # literal GLM-5.2, hosted
+      - zai/GLM-5.2                            # literal GLM-5.2, hosted (Crusoe)
       - deepseek-ai/DeepSeek-V4-Pro
       - Qwen/Qwen3-235B-A22B-Instruct-2507
       - moonshotai/Kimi-K2.6
+      - openai/gpt-5.5                         # OpenRouter
+      - google/gemini-3.5-flash                # OpenRouter
+      - moonshotai/kimi-k2.7-code              # OpenRouter
+      - mistralai/devstral-2512                # OpenRouter
+      - claude-sonnet-5                        # Anthropic, direct (cache-sticky)
+      - claude-haiku-4-5
+      - claude-opus-4-8
+      - morph-v3-fast                          # MorphLLM fast-apply
+      - morph-glm52-744b
 
 # Alternate local endpoints (swap `api`):
 #   llama.cpp: http://localhost:8080/v1   (serve/serve-llamacpp.sh)
