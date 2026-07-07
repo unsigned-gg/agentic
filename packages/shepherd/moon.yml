@@ -1,0 +1,8 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'tool'
+tags: ['python']
+
+project:
+  name: 'shepherd'
+  description: 'shepherd runtime substrate — pinned install, doctor/quickstart runbook (claude executor)'
