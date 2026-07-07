@@ -53,6 +53,35 @@ are maintained separately.
   `python/robomp` is a reference external supervisor driving `omp --mode rpc`
   against per-issue worktrees.
 
+## Local profile (context budget)
+
+omp's default request footprint measured **~39k tokens before the first user
+word** (v16.3.11, machine with a populated Claude Code ecosystem): ~19k tool
+JSON schemas + ~15.8k auto-discovered skill descriptions (omp co-reads every
+`.claude`/`.agents`/plugin skills dir — 157 skills here) + ~2.5k CLAUDE.md
+ingestion + ~2k omp core prompt. That exceeds every 32k local model.
+
+**`config/config.local.yml`** → seeded to `~/.omp/agent/config.yml` if absent:
+hides non-essential tool schemas behind tool discovery
+(`tools.discoveryMode: all` + a 6-tool essential set; verified 20 → 9
+schemas), disables heavy subsystems (LSP, DAP, AST, kernels), and scopes
+skill discovery to the shared set via the `skills.includeSkills` allowlist
+(source toggles alone still admit plugin skills — verified 111 remained;
+the allowlist is CI-synced against `packages/skills/`). Measured result:
+**~12k real tokens** (13.2k by the probe's ~10%-high estimator), down from
+~39k — fits 32k local contexts. Full-harness omp remains the right
+configuration for gateway/frontier models (delete the file or flip
+`tools.discoveryMode: auto`). Config format note: keys are NESTED YAML maps
+(`tools: {discoveryMode}`), not dotted strings — dotted keys are silently
+ignored, as are unknown keys (`generate_image` has no toggle and ships ~505
+tokens regardless).
+
+**`tools/measure-context.sh`** measures the real footprint: it runs `omp -p`
+against a localhost capture sink under a throwaway profile and prints the
+system/tools/skills breakdown. Run it on every pin bump
+(`--budget 14000 --settings config/config.local.yml` is the regression gate,
+in estimator space); it needs omp installed, so it is not CI-gated.
+
 ## Pin-churn posture
 
 Upstream cuts multiple releases per day. This repo's charter is curated

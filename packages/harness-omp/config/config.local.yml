@@ -1,0 +1,68 @@
+# omp local-model profile — slims the default ~39k-token request footprint so
+# locally served models fit. Measured on this preset (2026-07-07, v16.3.11):
+# default config ~39k real tokens; this profile ~13k (breakdown in README).
+# Default decomposition: ~19k tool JSON schemas + ~15.8k auto-discovered skill
+# descriptions (157 skills across ~/.claude + ~/.agents + plugins) + ~2.5k
+# CLAUDE.md/rules ingestion + ~2k omp core prompt.
+#
+# Format note (verified live): keys are NESTED maps, not dotted strings —
+# `tools.discoveryMode` in the schema is `tools: { discoveryMode: ... }` here.
+#
+# Escape hatch: pointing omp at gateway/frontier models (200k context)? Flip
+# tools.discoveryMode to auto and drop skills.includeSkills — or delete
+# ~/.omp/agent/config.yml and re-run install.sh for a fresh copy of this file.
+# Keys verified against v16.3.11; re-check on pin bump (tools/measure-context.sh).
+
+# --- tool schema payload (the ~19k lever) ----------------------------------
+tools:
+  # 'all' hides every non-essential builtin behind the search_tool_bm25 tool;
+  # only the essential set ships JSON schemas up front (verified: 20 -> 9).
+  discoveryMode: all
+  # replaces the default essential set [read, bash, edit, write, glob, eval]
+  essentialOverride: [read, bash, edit, write, glob, grep]
+
+# heavy subsystems local models rarely drive well (schema tokens + runtime)
+lsp:
+  enabled: false
+debug:
+  enabled: false        # DAP debugger
+astGrep:
+  enabled: false
+astEdit:
+  enabled: false
+todo:
+  enabled: false
+checkpoint:
+  enabled: false
+eval:
+  py: false             # IPython kernel
+  js: false             # in-process JS runtime
+
+# --- prompt trims -----------------------------------------------------------
+personality: none       # -~275 tokens
+inlineToolDescriptors: off
+includeWorkspaceTree: false
+
+# --- skill discovery scoping (the ~15.8k lever) -----------------------------
+# omp discovers skills from .claude/.codex/.agents trees AND plugin dirs; the
+# source toggles alone still admit 111 plugin skills (verified). includeSkills
+# is a strict allowlist (verified: intersects enabled sources) — pin it to the
+# shared set from packages/skills/. A bun test keeps this list in sync with
+# the packages/skills directory listing.
+skills:
+  includeSkills: [local-model-triage]
+  enablePiUser: true    # ~/.omp/agent/skills (omp-native user dir)
+  enablePiProject: true # .omp/skills in-repo
+  enableClaudeUser: false
+  enableClaudeProject: false
+  enableCodexUser: false
+  enableAgentsUser: false
+  enableAgentsProject: false
+
+# --- role -> model mapping ---------------------------------------------------
+# cheap roles stay local; ids match models.yml entries (provider/model)
+modelRoles:
+  default: ollama/qwen3.6-27b-mtp
+  smol: ollama/qwen3.5-9b-mtp
+  slow: ollama/qwen3.6-35b-mtp
+  plan: ollama/qwen3.6-35b-mtp
