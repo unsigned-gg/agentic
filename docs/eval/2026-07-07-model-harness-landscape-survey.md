@@ -16,6 +16,14 @@ Research project now reported as the fastest-growing agent framework in open
 source (60k+ stars in two months) on the strength of persistent multi-tier
 memory + a skill-writing learning loop — a pin-audit is Top-5 item 3.
 
+> **CORRECTION 2026-07-09 (OPS-480, source-verified):** the "persistent
+> multi-tier memory" claim above does not hold up against
+> `hermes_cli/config.py` on `NousResearch/hermes-agent@main` — the built-in
+> memory provider is two flat Markdown files (`MEMORY.md`, `USER.md`) with no
+> tier granularity, not three tiers. The skill-writing loop is confirmed
+> present and on by default at 0.18.0. See
+> `packages/harness-hermes/README.md` Verdict section for the full audit.
+
 ## 1. Models for the cluster
 
 ### Pragmatic — fits gateway upstreams or 32GB local tier now
@@ -88,6 +96,15 @@ memory + a skill-writing learning loop — a pin-audit is Top-5 item 3.
   60k+ stars in two months. **We pin 0.18.x — audit whether the memory/skill
   loop postdates the pin.** [site](https://hermes-agent.org/) ·
   [writeup](https://www.tencentcloud.com/techpedia/143930)
+  > **CORRECTION 2026-07-09 (OPS-480, source-verified):** memory is two flat
+  > Markdown files (`MEMORY.md` agent notes, `USER.md` user profile) injected
+  > into the system prompt, plus an empty-by-default external-provider slot
+  > (7 options, none of them Engram) — NOT three-tier semantic/working/
+  > episodic; that framing doesn't correspond to any config surface at
+  > 0.18.0. Skill-writing loop confirmed present and on by default, with
+  > unrestricted writes (`skills.write_approval: false` upstream default).
+  > Full audit + Engram-boundary lane decision in
+  > `packages/harness-hermes/README.md` Verdict section.
 - **OpenClaw** (ex-Moltbot/Clawdbot) — 280k+ stars (reportedly passed React;
   9k→60k in 72h at peak). Local-first gateway, 20+ messaging channels,
   cron/nodes/canvas first-class, 13.7k-skill marketplace, Markdown memory.
