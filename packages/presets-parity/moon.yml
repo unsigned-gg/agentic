@@ -1,0 +1,17 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'tool'
+
+project:
+  name: 'presets-parity'
+  description: 'Cross-harness gateway-preset drift gate — the four llm model lists must agree'
+
+tasks:
+  test:
+    command: 'bun test'
+    inputs:
+      - 'tests/**/*'
+      - '/packages/harness-pi/config/models.json'
+      - '/packages/harness-omp/config/models.yml'
+      - '/packages/harness-opencode/config/opencode.json'
+      - '/packages/harness-hermes/config/cli-config.local-endpoint.yaml'
