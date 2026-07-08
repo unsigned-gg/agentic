@@ -39,9 +39,18 @@ Cloudflare-edge footprint.
   platform; steal the preview-env pattern; if the CF 30-min cap blocks a real
   workload, bench Northflank-BYOC vs E2B on that workload (BYOC = execution
   inside our own cloud boundary is the one compelling hook).
-- **PENDING**: operator hypothesis that Northflank's sandbox product wraps an
-  OSS runtime ("Sandcastle") — researcher verification in flight; verdict
-  lands as a follow-up commit.
+- **"Is it just Sandcastle?" — REFUTED, usefully.** No "Sandcastle" backend
+  exists to wrap: the name collides across ≥4 unrelated small OSS projects
+  (mattpocock's TS agent-orchestrator, a pip `sandcastle-ai`, a vercel-labs
+  PoC, another orchestrator) plus Meta's internal CI (pure name collision).
+  Zero evidence pairs Northflank with any of them. Northflank's own docs are
+  consistent: **Kata Containers + Cloud Hypervisor via containerd** (QEMU /
+  gVisor / Firecracker as alternates), with upstream contributions to those
+  projects. Better than confirmed: the ENTIRE isolation stack is standard
+  CNCF-adjacent OSS with no proprietary core — every component assembles on
+  our own cluster with no Northflank dependency.
+  [architecture](https://northflank.com/blog/how-to-sandbox-ai-agents) ·
+  [Cloud Hypervisor guide](https://northflank.com/blog/guide-to-cloud-hypervisor)
 
 [funding](https://www.finsmes.com/2024/11/northflank-raises-22-3m-in-funding.html) ·
 [Latka](https://getlatka.com/companies/northflank.com) ·
@@ -113,9 +122,15 @@ Cloudflare-edge footprint.
 
 1. **Build on our own paas (gVisor/Kata on existing k8s)** — zero vendor risk,
    full session-semantics control, substrate (OpenBao/Harbor/hardened images)
-   already exists. Right default unless a concrete requirement justifies
-   paying: the two candidates are Firecracker snapshot/resume (→ E2B) or
-   managed multi-cloud BYOC orchestration (→ Northflank).
+   already exists. Concrete starting point (via the Sandcastle investigation):
+   **Kubernetes SIG "Agent Sandbox"** (agent-sandbox.sigs.k8s.io) with Kata
+   Containers + Cloud Hypervisor — the same fully-OSS stack Northflank itself
+   runs, already solving this orchestration problem upstream
+   ([k8s blog 2026-03](https://kubernetes.io/blog/2026/03/20/running-agents-on-kubernetes-with-agent-sandbox/) ·
+   [Kata integration](https://katacontainers.io/blog/kata-containers-agent-sandbox-integration/)).
+   Right default unless a concrete requirement justifies paying: the two
+   candidates are Firecracker snapshot/resume (→ E2B) or managed multi-cloud
+   BYOC orchestration (→ Northflank).
 2. **E2B self-hosted** — best isolation + the 5-30ms snapshot/resume that
    nothing else has; cost is operating Nomad/Consul alongside ArgoCD. Worth it
    only if snapshot/resume specifically matters.
