@@ -77,10 +77,10 @@ describe("gateway preset parity", () => {
   test.if(process.env.PARITY_LIVE === "1")(
     "live gateway catalog is a superset of the preset set",
     async () => {
-      const key = process.env.UNSIGNED_LLM_API_KEY;
-      expect(key, "PARITY_LIVE=1 needs UNSIGNED_LLM_API_KEY").toBeTruthy();
+      const bearer = process.env.UNSIGNED_LLM_API_KEY;
+      if (!bearer) throw new Error("PARITY_LIVE=1 requires the gateway credential env var to be set");
       const res = await fetch("https://llm.unsigned.gg/v1/models", {
-        headers: { authorization: `Bearer ${key}` },
+        headers: { authorization: `Bearer ${bearer}` },
       });
       expect(res.status).toBe(200);
       const body = (await res.json()) as { data: { id: string }[] };
