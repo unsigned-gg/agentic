@@ -55,6 +55,105 @@ containers, but the jail is self-contained (unprivileged Landlock, kernel
 `CONFIG_SECURITY_LANDLOCK=y`) `doctor` reports `native-jail: available` and
 jailed runs execute. Always gate on `shepherd doctor claude`, not assumption.
 
+## Operational runbook (live-agent runs)
+
+The retained-run lifecycle from the quickstart demo scales to real agent work,
+but the v0.2.x surface has three operational gaps the quickstart doesn't
+exercise. All three were hit during a real multi-file Rust refactor run
+(2026-07-09, reverie CER-1190); the fixes are mechanical and repeatable.
+
+### 1. Budget: the default 240 s is too short for refactors with compile checks
+
+`workspace.run(runtime={"provider": "claude"})` constructs the
+`ClaudeHeadlessProvider` with `budget_seconds=240` (hardcoded default). That's
+enough for the donut demo but not for a multi-file edit + `cargo check` cycle
+on a large workspace — the agent gets `BudgetExhausted` mid-flight and the run
+fails. The budget is **not exposed** through the `runtime` dict (which only
+carries `provider` and `model`); you patch it at the transport seam:
+
+```python
+from shepherd_dialect.workspace_control import runtime_provider as rp
+from shepherd_dialect.providers import ClaudeHeadlessProvider
+
+BUDGET_SECONDS = 900   # 15 min — enough for a multi-file refactor + cargo check
+MAX_TURNS = 40
+
+def _patched_transport(invocation):
+    return ClaudeHeadlessProvider(
+        provider_id=invocation.provider_id,
+        prompt=invocation.prompt,
+        model=invocation.model_name,
+        budget_seconds=BUDGET_SECONDS,
+        max_turns=MAX_TURNS,
+    )
+
+rp._WORKSPACE_RUNTIME_PROVIDER_TRANSPORTS = rp._WorkspaceRuntimeProviderTransports(
+    claude=_patched_transport,
+)
+```
+
+Set this **before** `workspace.run(...)`. The transport object is a frozen
+dataclass holding one callable; replacing it is the only public-adjacent way
+to raise the budget without a source fork. Revisit if upstream exposes
+`budget_seconds` in the runtime plan.
+
+### 2. Crashed runs orphan a scope that blocks readiness — `repair` won't fix it
+
+A run that dies mid-flight (budget exhausted, host loss, wrong interpreter)
+can leave an **orphaned scope ref** in `.vcscore/`. The next `workspace.run`
+fails with `readiness blocked by run-XXXXXXXX`. `shepherd run repair`
+reclaims orphaned *operation refs* only — it will report "Nothing to repair"
+while the scope ref still blocks. The fix is the `VcsCoreApp` recovery API:
+
+```python
+uv run --with "shepherd-ai==0.2.1" python3 -c "
+from vcs_core._app import VcsCoreApp, AppOpenMode
+with VcsCoreApp.open_existing('.', mode=AppOpenMode.RECOVERY) as app:
+    print(app.archive_orphaned_scopes())
+"
+```
+
+This is the failure mode the durable-patterns spec (OPS-482) targets for
+automated recovery. Until that lands, `archive_orphaned_scopes()` is the
+manual unblock. Gate on it: if `shepherd run repair` says "Nothing to
+repair" but `workspace.run` still fails with `readiness blocked`, run the
+snippet above.
+
+### 3. `select` moves into vcs-core custody, not the working tree
+
+`shepherd run select <run>` settles the output (state → `selected`) but does
+**not** materialize the files into the working tree — it moves the changeset
+into its "live parent world" inside `.vcscore/`. To get the files into the
+tree for compile-check, read them from the retained changeset and write them
+yourself:
+
+```bash
+shepherd run changeset <run> --read <path> > <path>   # one file at a time
+```
+
+or batch-extract with a loop. The retained changeset is the source of truth;
+`select`/`release`/`discard` are settlement actions, not filesystem
+materialization. This gap is inherent to v0.2.x's world/custody model.
+
+### Pre-flight checklist for a real agent run
+
+1. `shepherd doctor claude --probe` — 9/9 including live auth round-trip.
+2. Check readiness if the workspace has prior runs:
+   ```python
+   uv run --with "shepherd-ai==0.2.1" python3 -c "
+   from vcs_core._query_readiness import evaluate_readiness, ReadinessRequest
+   r = evaluate_readiness('.vcscore', ReadinessRequest(command='shepherd.run'))
+   print(r.state, len(r.blockers or []))
+   "
+   ```
+   If `blocked`, run the `archive_orphaned_scopes()` snippet from §2.
+3. Patch the budget (§1) if the task involves edits + compile/test cycles.
+4. After the run: `shepherd run show <run>` (enforcement, terminal status),
+   `shepherd run changeset --latest` (files), `--read <path>` (content).
+5. To apply: extract files from the changeset (§3), `cargo check` / test,
+   then `git add` + commit. `select` is optional — it's a settlement record,
+   not the materialization step.
+
 ## Verified
 
 CI-gated: install-script pin format + README/pin agreement (`tests/`),
@@ -71,6 +170,12 @@ shellcheck, ruff. Exercised live on WSL2 (2026-07-06, kernel 6.6.87.2):
   `discard`. Caveat observed: a demo run that crashes mid-flight (e.g. wrong
   interpreter) can leave the workspace `readiness blocked` for later runs —
   a fresh `shepherd init` directory clears it.
+- **Real agent refactor** (2026-07-09, reverie CER-1190): jailed agent ran
+  5.7 min with budget patched to 900 s / 40 turns, wrote a 10-file changeset
+  (multi-crate `tracing-subscriber` consolidation), changeset reviewed
+  file-by-file via `--read`, rustfmt-clean, all 4 sites replaced, `reveried`
+  untouched. Three operational gaps documented above were all hit and
+  resolved during this run.
 
 Needs live exercise per-host: jail availability (kernel-dependent) and claude
 auth — both reported by `shepherd doctor claude`.
