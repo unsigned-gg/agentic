@@ -82,6 +82,14 @@ configuration for gateway/frontier models (delete the file or flip
 ignored, as are unknown keys (`generate_image` has no toggle and ships ~505
 tokens regardless).
 
+**`config/config.gateway-slim.yml`** — the measured middle ground (OPS-481,
+docs/eval/2026-07-09-code-mode-vs-omp-discovery.md): full default tool harness
+for gateway/frontier models, skills pinned to the shared allowlist. ~28.9k est
+tokens vs ~47k ambient (-38%); the skills block is the profile's only
+organically-growing cost (+1.7k/day observed from plugin sprawl). Regression
+gate: `tools/measure-context.sh --budget 31000 --settings
+config/config.gateway-slim.yml`.
+
 **`tools/measure-context.sh`** measures the real footprint: it runs `omp -p`
 against a localhost capture sink under a throwaway profile and prints the
 system/tools/skills breakdown. Run it on every pin bump
