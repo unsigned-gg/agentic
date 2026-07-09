@@ -17,7 +17,7 @@ Four harnesses, one skills standard, one endpoint pattern:
 | [`packages/harness-pi`](packages/harness-pi/) | [pi.dev](https://pi.dev) (`badlogic/pi-mono`) — config, `models.json` local-endpoint presets, TS extensions | `@earendil-works/pi-coding-agent` 0.80.3 |
 | [`packages/harness-opencode`](packages/harness-opencode/) | [opencode](https://opencode.ai) — `opencode.json` presets, plugins, agents | `opencode-ai` 1.17.13 |
 | [`packages/harness-hermes`](packages/harness-hermes/) | [hermes-agent](https://github.com/NousResearch/hermes-agent) (Nous Research) — `cli-config.yaml` presets, tools/MCP wiring | `hermes-agent` 0.18.0 |
-| [`packages/harness-omp`](packages/harness-omp/) | [oh-my-pi](https://omp.sh) (`can1357/oh-my-pi`, hard fork of pi) — `models.yml` presets, headless RPC surface | `@oh-my-pi/pi-coding-agent` 16.3.11 |
+| [`packages/harness-omp`](packages/harness-omp/) | [oh-my-pi](https://omp.sh) (`can1357/oh-my-pi`, hard fork of pi) — `models.yml` presets, headless RPC surface | `@oh-my-pi/pi-coding-agent` 16.3.12 |
 | [`packages/skills`](packages/skills/) | **Shared** [agentskills.io](https://agentskills.io) skills — written once, installed into all four harnesses (+ Claude Code) | — |
 | [`packages/shepherd`](packages/shepherd/) | [shepherd](https://github.com/shepherd-agents/shepherd) runtime substrate — reversible traces, retained-output review, syscall-jailed agent runs (claude executor) | `shepherd-ai` 0.2.1 |
 | [`packages/local-models`](packages/local-models/) | Hardware probe → tiered model matrix → serving configs (llama.cpp / vLLM / ollama, OpenAI-compatible) | see `MODELS.md` |

@@ -1,5 +1,5 @@
 # omp local-model profile — slims the default ~39k-token request footprint so
-# locally served models fit. Measured on this preset (2026-07-07, v16.3.11):
+# locally served models fit. Measured on this preset (2026-07-07, v16.3.12):
 # default config ~39k real tokens; this profile ~13k (breakdown in README).
 # Default decomposition: ~19k tool JSON schemas + ~15.8k auto-discovered skill
 # descriptions (157 skills across ~/.claude + ~/.agents + plugins) + ~2.5k
@@ -11,7 +11,7 @@
 # Escape hatch: pointing omp at gateway/frontier models (200k context)? Flip
 # tools.discoveryMode to auto and drop skills.includeSkills — or delete
 # ~/.omp/agent/config.yml and re-run install.sh for a fresh copy of this file.
-# Keys verified against v16.3.11; re-check on pin bump (tools/measure-context.sh).
+# Keys verified against v16.3.12; re-check on pin bump (tools/measure-context.sh).
 
 # --- tool schema payload (the ~19k lever) ----------------------------------
 tools:

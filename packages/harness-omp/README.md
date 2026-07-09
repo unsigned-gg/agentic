@@ -7,7 +7,7 @@ consumes: local-models/README.md (endpoint wiring), docs/eval/2026-07-06-shepher
 # harness-omp
 
 [oh-my-pi](https://github.com/can1357/oh-my-pi) ([omp.sh](https://omp.sh)) at
-curated pin **`@oh-my-pi/pi-coding-agent` 16.3.11**, binary `omp` — a hard
+curated pin **`@oh-my-pi/pi-coding-agent` 16.3.12**, binary `omp` — a hard
 fork of pi with an aggressively expanded tool harness: hash-anchored edits,
 LSP-wired writes, DAP debugging, first-class worktree-isolated subagents,
 persistent Python/Bun eval kernels, and headless RPC/ACP modes.
@@ -19,7 +19,7 @@ omp              # interactive TUI; `omp -p "..."` for one-shot headless
 
 **Install-path note:** upstream's documented install is a remote script piped
 to a shell. That is banned in this repo, so `install.sh` uses
-`bun install -g @oh-my-pi/pi-coding-agent@16.3.11` — the same npm package the
+`bun install -g @oh-my-pi/pi-coding-agent@16.3.12` — the same npm package the
 installer resolves to. omp is **Bun-native** (`engines.bun >= 1.3.14`); the
 repo's `.prototools` pins bun 1.3.14 and `scripts/bootstrap.sh` provisions it.
 
@@ -44,7 +44,7 @@ are maintained separately.
   the deprecation window).
   `apiKey` values are env-var names (resolved env-first, then literal) — no
   secrets in the preset. **Schema caveat:** validated against the
-  `models-config-schema.ts` shipped in v16.3.11; upstream releases multiple
+  `models-config-schema.ts` shipped in v16.3.12; upstream releases multiple
   times a day, so re-check on bump. **Context caveat:** omp's default system
   prompt (32 tools + skills) measured ~39k tokens — it does not fit the 32k
   context the local presets serve. For local models either serve a larger
@@ -62,7 +62,7 @@ are maintained separately.
 ## Local profile (context budget)
 
 omp's default request footprint measured **~39k tokens before the first user
-word** (v16.3.11, machine with a populated Claude Code ecosystem): ~19k tool
+word** (v16.3.12, machine with a populated Claude Code ecosystem): ~19k tool
 JSON schemas + ~15.8k auto-discovered skill descriptions (omp co-reads every
 `.claude`/`.agents`/plugin skills dir — 157 skills here) + ~2.5k CLAUDE.md
 ingestion + ~2k omp core prompt. That exceeds every 32k local model.
@@ -100,7 +100,7 @@ expect the pin to trail latest by design. See the adoption eval in
 CI-gated: shellcheck on `install.sh`. Exercised live (2026-07-06, WSL2):
 
 - `proto install` provisions bun 1.3.14 from the `.prototools` pin.
-- `install.sh` → global install at 16.3.11, `omp --version` reports the pin,
+- `install.sh` → global install at 16.3.12, `omp --version` reports the pin,
   preset seeded to `~/.omp/agent/models.yml`. Bun blocked two dependency
   postinstalls (`onnxruntime-node`, `protobufjs`) under its default trust
   model — core CLI unaffected; `bun pm -g trust` them if omp's local-embedding
