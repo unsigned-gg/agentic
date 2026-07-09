@@ -14,7 +14,7 @@ const README = readFileSync(join(PKG, "README.md"), "utf8");
 const SECRETY = ["sk-", "Bearer", "ghp_", "AKIA"];
 const ENDPOINT_ALLOWLIST = [/^http:\/\/localhost[:/]/, /^http:\/\/127\.0\.0\.1[:/]/, /^https:\/\/llm\.unsigned\.gg\//];
 
-// BUILTIN_TOOL_NAMES from oh-my-pi v16.3.11
+// BUILTIN_TOOL_NAMES from oh-my-pi v16.3.12
 // packages/coding-agent/src/tools/builtin-names.ts — re-check on pin bump.
 const BUILTIN_TOOLS = [
   "read", "bash", "edit", "ast_grep", "ast_edit", "ask", "debug", "eval",

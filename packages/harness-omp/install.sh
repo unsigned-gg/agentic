@@ -4,7 +4,7 @@
 # bun-native install from npm instead (same package the installer resolves to).
 set -euo pipefail
 
-OMP_VERSION="16.3.11"
+OMP_VERSION="16.3.12"
 PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 command -v bun >/dev/null 2>&1 || { echo "bun not found — run scripts/bootstrap.sh first (proto provides bun)" >&2; exit 1; }

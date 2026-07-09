@@ -1,6 +1,6 @@
 # omp custom providers — same endpoints as harness-pi's models.json, expressed
 # in omp's models.yml schema (packages/coding-agent/src/config/models-config-schema.ts
-# @ v16.3.11). apiKey values are resolved env-var-name-first, then literal
+# @ v16.3.12). apiKey values are resolved env-var-name-first, then literal
 # (resolve-config-value.ts) — no secrets live in this file.
 providers:
   llm:
