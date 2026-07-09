@@ -1,0 +1,32 @@
+# omp gateway-slim profile — full default TOOL harness, TRIMMED skill discovery.
+#
+# The measured middle ground (docs/eval/2026-07-09-code-mode-vs-omp-discovery.md,
+# OPS-481, row D): the gateway/frontier profile's skill auto-discovery block is
+# its largest and only ORGANICALLY-GROWING context cost (~16.5k est tokens and
+# +1.7k in a single day from ambient plugin growth). Pinning skills to the
+# shared allowlist — and nothing else — cut a live gateway profile from
+# ~47.0k to ~28.9k est tokens (-38%) with zero tool-availability change.
+#
+# vs the other presets:
+#   config.local.yml  — 32k-local-model profile: slims tools AND skills (~13k)
+#   this file         — gateway models (200k ctx): full tools, slim skills (~29k)
+#   no settings file  — omp defaults: full tools, ambient skills (~45k and growing)
+#
+# Install: copy to ~/.omp/agent/config.yml (never clobber live config).
+# Keys are NESTED maps — dotted keys are silently ignored (verified live).
+# The allowlist is CI-synced against packages/skills/ (tests/preset.test.ts).
+
+# --- role -> model mapping ---------------------------------------------------
+modelRoles:
+  default: llm/zai/GLM-5.2
+
+# --- skill discovery scoping (the ~16.5k lever; tools deliberately untouched) -
+skills:
+  includeSkills: [local-model-triage]
+  enablePiUser: true    # ~/.omp/agent/skills (omp-native user dir)
+  enablePiProject: true # .omp/skills in-repo
+  enableClaudeUser: false
+  enableClaudeProject: false
+  enableCodexUser: false
+  enableAgentsUser: false
+  enableAgentsProject: false

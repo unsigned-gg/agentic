@@ -85,10 +85,41 @@ describe("config.local.yml", () => {
   });
 });
 
+describe("config.gateway-slim.yml", () => {
+  const GATEWAY_SLIM = readFileSync(join(PKG, "config/config.gateway-slim.yml"), "utf8");
+  const doc = Bun.YAML.parse(GATEWAY_SLIM) as Record<string, any>;
+
+  test("tools deliberately untouched (full gateway harness)", () => {
+    expect(doc.tools).toBeUndefined();
+  });
+
+  test("includeSkills allowlist stays in sync with packages/skills", () => {
+    const skillsDir = join(PKG, "../skills");
+    const shared = readdirSync(skillsDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && existsSync(join(skillsDir, e.name, "SKILL.md")))
+      .map((e) => e.name)
+      .sort();
+    const allowlist = ([...(doc.skills?.includeSkills ?? [])] as string[]).sort();
+    expect(allowlist).toEqual(shared);
+  });
+
+  test("modelRoles point at models declared in models.yml", () => {
+    const models = Bun.YAML.parse(MODELS) as Record<string, any>;
+    const declared = new Set<string>();
+    for (const [prov, p] of Object.entries<any>(models.providers)) {
+      for (const m of p.models ?? []) declared.add(`${prov}/${m.id}`);
+    }
+    for (const [role, id] of Object.entries<string>(doc.modelRoles ?? {})) {
+      expect(declared.has(id), `${role}: ${id}`).toBeTrue();
+    }
+  });
+});
+
 describe("secretlessness", () => {
   test.each([
     ["models.yml", MODELS],
     ["config.local.yml", SETTINGS],
+    ["config.gateway-slim.yml", readFileSync(join(PKG, "config/config.gateway-slim.yml"), "utf8")],
   ])("%s carries no secret-shaped strings", (_name, text) => {
     for (const needle of SECRETY) expect(text).not.toInclude(needle);
   });
