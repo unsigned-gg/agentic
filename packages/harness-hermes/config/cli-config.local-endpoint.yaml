@@ -49,3 +49,22 @@ providers:
 # Alternate local endpoints (swap `api`):
 #   llama.cpp: http://localhost:8080/v1   (serve/serve-llamacpp.sh)
 #   vLLM:      http://localhost:8000/v1   (serve/serve-vllm.sh)
+
+# Memory/skill-loop boundary vs Engram (OPS-480, 2026-07-08; see README Verdict
+# section for the full reasoning). hermes's built-in memory store (two flat
+# files, ~/.hermes/memories/MEMORY.md + USER.md) would otherwise accumulate
+# the same class of cross-session facts about the operator as Engram, with no
+# reconciliation between the two. Engram is this repo's designated
+# cross-harness memory of record (session-bootstrap wiring, all four
+# harnesses) -- hermes's own tier stays off so there is exactly one canonical
+# long-term store.
+memory:
+  memory_enabled: false
+
+# The skill-writing self-improvement loop (/learn, skill_manage) lands
+# agent-authored SKILL.md files with no review gate by default upstream.
+# Skills are hermes-local procedural knowledge -- not Engram's domain -- so
+# the loop itself stays on, but agent-authored writes require a look before
+# they land.
+skills:
+  write_approval: true
