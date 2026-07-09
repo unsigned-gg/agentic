@@ -7,10 +7,10 @@ consumes: docs/eval/2026-07-06-shepherd-omp-adoption.md (adoption rationale)
 # shepherd
 
 [shepherd](https://github.com/shepherd-agents/shepherd) runtime substrate at
-curated pin **`shepherd-ai` 0.2.1** — records agent runs as reversible
+curated pin **`shepherd-ai` 0.3.0** — records agent runs as reversible
 execution traces; sandboxed agents produce *retained outputs* reviewed with
-`shepherd run changeset` and settled with `select`/`release`/`discard` before
-anything touches the working tree. Task permissions are declared per-binding
+`shepherd run changeset` and settled with `select`/`release`/`apply`/`discard`
+before anything touches the working tree. Task permissions are declared per-binding
 in the Python signature (`May[GitRepo, ReadOnly|ReadWrite]`) and enforced at
 the native syscall jail (Linux Landlock; macOS Seatbelt).
 
@@ -22,7 +22,8 @@ shepherd doctor claude    # core + jail + claude CLI/auth readiness (--probe = l
 ```
 
 Not a harness: this package is the supervision layer next to the harnesses.
-The sandboxed executor lane is **claude-only by design** in v0.2.x — the
+The sandboxed executor lane is **claude-only by design** through v0.3.x
+(re-verified against the 0.3.0 runtime-provider source) — the
 retained-run provider accepts `static` (deterministic, keyless) or `claude`;
 pointing it at pi/omp would be an upstream source fork, not configuration
 (see the adoption eval in `docs/eval/`).
@@ -43,24 +44,28 @@ pointing it at pi/omp would be an upstream source fork, not configuration
 - **Python API note:** `uv tool install` exposes the CLIs only. Demo scripts
   (`agent_task.py` etc.) import `shepherd`/`shepherd_dialect`, so run them
   with an interpreter that has `shepherd-ai` installed as a library
-  (`uv run --with "shepherd-ai==0.2.1" python agent_task.py`), not the bare
+  (`uv run --with "shepherd-ai==0.3.0" python agent_task.py`), not the bare
   system `python3`.
 
 ## Placement semantics (why WSL2 works)
 
 `placement="jail"` fails closed where the OS jail is unavailable; `"auto"`
-degrades visibly to advisory. Upstream validates Linux Landlock only inside
-containers, but the jail is self-contained (unprivileged Landlock, kernel
-5.13+): on this repo's reference WSL2 host (kernel 6.6.87.2,
+degrades visibly to advisory. As of 0.3.0 upstream executes grant enforcement
+on both Linux (Landlock) and macOS (Seatbelt) — the 0.2.0 container-gated
+validation caveat is retired. The jail remains self-contained (unprivileged
+Landlock, kernel 5.13+): on this repo's reference WSL2 host (kernel 6.6.87.2,
 `CONFIG_SECURITY_LANDLOCK=y`) `doctor` reports `native-jail: available` and
 jailed runs execute. Always gate on `shepherd doctor claude`, not assumption.
 
 ## Operational runbook (live-agent runs)
 
 The retained-run lifecycle from the quickstart demo scales to real agent work,
-but the v0.2.x surface has three operational gaps the quickstart doesn't
-exercise. All three were hit during a real multi-file Rust refactor run
-(2026-07-09, reverie CER-1190); the fixes are mechanical and repeatable.
+but the surface has three operational gaps the quickstart doesn't exercise.
+All three were hit during a real multi-file Rust refactor run (2026-07-09,
+reverie CER-1190, on 0.2.1); the fixes are mechanical and repeatable, and
+every internal they rely on was re-probed as present and unchanged in 0.3.0
+(`budget_seconds` default still 240, transport seam, recovery API,
+readiness query).
 
 ### 1. Budget: the default 240 s is too short for refactors with compile checks
 
@@ -106,7 +111,7 @@ reclaims orphaned *operation refs* only — it will report "Nothing to repair"
 while the scope ref still blocks. The fix is the `VcsCoreApp` recovery API:
 
 ```python
-uv run --with "shepherd-ai==0.2.1" python3 -c "
+uv run --with "shepherd-ai==0.3.0" python3 -c "
 from vcs_core._app import VcsCoreApp, AppOpenMode
 with VcsCoreApp.open_existing('.', mode=AppOpenMode.RECOVERY) as app:
     print(app.archive_orphaned_scopes())
@@ -133,14 +138,18 @@ shepherd run changeset <run> --read <path> > <path>   # one file at a time
 
 or batch-extract with a loop. The retained changeset is the source of truth;
 `select`/`release`/`discard` are settlement actions, not filesystem
-materialization. This gap is inherent to v0.2.x's world/custody model.
+materialization — a gap inherent to the world/custody model. 0.3.0 adds a
+fourth verb, `apply` (three-way-merge of a run's delta onto a workspace that
+moved on, fail-closed on overlap); whether it also materializes the working
+tree has NOT been live-exercised here yet — until verified, keep using the
+changeset-extract flow below.
 
 ### Pre-flight checklist for a real agent run
 
 1. `shepherd doctor claude --probe` — 9/9 including live auth round-trip.
 2. Check readiness if the workspace has prior runs:
    ```python
-   uv run --with "shepherd-ai==0.2.1" python3 -c "
+   uv run --with "shepherd-ai==0.3.0" python3 -c "
    from vcs_core._query_readiness import evaluate_readiness, ReadinessRequest
    r = evaluate_readiness('.vcscore', ReadinessRequest(command='shepherd.run'))
    print(r.state, len(r.blockers or []))
@@ -157,9 +166,10 @@ materialization. This gap is inherent to v0.2.x's world/custody model.
 ## Verified
 
 CI-gated: install-script pin format + README/pin agreement (`tests/`),
-shellcheck, ruff. Exercised live on WSL2 (2026-07-06, kernel 6.6.87.2):
+shellcheck, ruff. Exercised live on WSL2 (0.2.1 on 2026-07-06, 0.3.0 bump on
+2026-07-09; kernel 6.6.87.2):
 
-- `install.sh` → `shepherd, version 0.2.1`, executables `shepherd` + `sp`.
+- `install.sh` → `shepherd, version 0.3.0`, executables `shepherd` + `sp`.
 - `shepherd doctor claude --json` → 8/8 ok, including `native-jail: available`
   and `claude-auth` via `ANTHROPIC_API_KEY`.
 - Offline quickstart (static provider, keyless) → run `retained`, changeset
@@ -176,6 +186,13 @@ shellcheck, ruff. Exercised live on WSL2 (2026-07-06, kernel 6.6.87.2):
   file-by-file via `--read`, rustfmt-clean, all 4 sites replaced, `reveried`
   untouched. Three operational gaps documented above were all hit and
   resolved during this run.
+- **0.3.0 bump verification** (2026-07-09): existing 0.2.1-era `.vcscore`
+  workspaces open cleanly under 0.3.0 (`doctor` Ready; `shepherd run list`
+  reads prior run history); offline quickstart green (run `retained`, settled
+  `released`). Known limitation unchanged: worktree adoption still hard-fails
+  on tracked symlinks and gitlinks (re-confirmed on 4 repos; OPS-524,
+  upstream `_workspace_external.py` raises on both).
 
 Needs live exercise per-host: jail availability (kernel-dependent) and claude
-auth — both reported by `shepherd doctor claude`.
+auth — both reported by `shepherd doctor claude`. Not yet exercised on 0.3.0:
+the jailed live-claude lane and the new `apply` settlement verb.
