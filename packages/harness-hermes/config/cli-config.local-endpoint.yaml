@@ -30,7 +30,9 @@ providers:
     name: llm (unsigned model gateway)
     api: https://llm.unsigned.gg/v1
     api_key: env:UNSIGNED_LLM_API_KEY
-    default_model: zai/GLM-5.2
+    # default kept deliberately cheap (operator directive 2026-07-08) — flip to
+    # zai/GLM-5.2 (or any listed id) in your live config for heavier work
+    default_model: google/gemini-3.5-flash
     models:
       - zai/GLM-5.2                            # literal GLM-5.2, hosted (Crusoe)
       - deepseek-ai/DeepSeek-V4-Pro
