@@ -3,7 +3,7 @@
 # Idempotent. uv-native install from PyPI — never pipe remote scripts to a shell.
 set -euo pipefail
 
-SHEPHERD_VERSION="0.2.1"
+SHEPHERD_VERSION="0.3.0"
 
 command -v uv >/dev/null 2>&1 || { echo "uv not found — run scripts/bootstrap.sh first (proto provides uv)" >&2; exit 1; }
 
