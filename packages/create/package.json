@@ -1,0 +1,37 @@
+{
+  "name": "@unsigned-gg/create",
+  "version": "0.1.0",
+  "description": "PostHog-style install wizard for cerebral/unsigned standard agent tooling — CLAUDE.md, .claude hooks, lefthook, .impeccable.md",
+  "type": "module",
+  "bin": {
+    "create-unsigned": "./dist/bin.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun build src/bin.ts --outdir dist --target=node --outfile=bin.js",
+    "dev": "bun --watch src/bin.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "format": "biome format --write src/",
+    "lint": "biome check src/"
+  },
+  "keywords": ["cli", "wizard", "claude-code", "agent-tooling", "cerebral", "unsigned", "scaffold", "bootstrap"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ]
+}

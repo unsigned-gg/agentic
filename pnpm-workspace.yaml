@@ -1,3 +1,4 @@
 packages:
   - 'packages/harness-pi'
   - 'packages/harness-opencode'
+  - 'packages/create'
