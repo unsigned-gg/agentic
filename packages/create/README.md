@@ -12,9 +12,13 @@ shared agent-harness config that every cerebral-work and unsigned-gg repo uses:
 - **`CLAUDE.md`** — project instructions for Claude Code (build, test, lint, conventions)
 - **`.claude/settings.json`** — permissions, hooks config (worktree-safe)
 - **`.claude/hooks/`** — enforced guardrails (main-push guard, ci-gate, lint-on-edit)
-- **`.claude/README.md`** — hook map
 - **`lefthook.yml`** — git hooks mirroring CI (gitleaks, conventional commits, affected CI)
 - **`.impeccable.md`** — design context placeholder (for impeccable plugin)
+- `.config/overflow/` — overflow terminal emulator config (agent-aware, mux, shell integration)
+- `.config/ghostty/` — ghostty terminal emulator config (unsigned color theme)
+- `.agent-config/` — harness config presets: omp, pi, opencode, hermes (model gateway)
+- `.agent-config/skills/` — symlink installer for agentskills.io shared across all harnesses
+- `.agent-config/local-models/` — hardware probe script (GPU VRAM → model tier recommendation)
 
 ## Design
 
@@ -47,6 +51,9 @@ npx @unsigned-gg/create --only claude,hooks,lefthook
 npx @unsigned-gg/create --force
 ```
 
+# Full agentic tooling (terminal + harness + skills + local models)
+npx @unsigned-gg/create --only terminal,harness,skills,local-models
+
 ## Options
 
 | Flag | Description |
@@ -54,7 +61,7 @@ npx @unsigned-gg/create --force
 | `--yes` / `-y` | Skip all prompts, use defaults / detected values |
 | `--type <rust\|node\|python\|monorepo>` | Override project type detection |
 | `--name <name>` | Project name (defaults to directory name) |
-| `--only <a,b,c>` | Install only listed components: `claude,hooks,lefthook,impeccable` |
+| `--only <a,b,c>` | Install only listed components: `claude,hooks,lefthook,impeccable,terminal,harness,skills,local-models` |
 | `--force` | Overwrite existing files without prompting |
 | `--dry-run` | Show what would be installed without writing |
 
@@ -82,6 +89,32 @@ enforcement, affected CI on pre-push.
 
 Design context file for the impeccable plugin (accessibility, performance,
 theming, responsive design audits). Placeholder with standard structure.
+
+### `terminal` — overflow.toml + ghostty config
+
+Agent-aware terminal emulator configs. **overflow** is the Rust GPU-accelerated
+terminal (`unsigned-gg/overflow`) with mux, demon mode, attention router, and
+reverie integration. **ghostty** is Mitchell Hashimoto's terminal. Both ship
+with the "unsigned" color theme and OSC 133 shell integration.
+
+### `harness` — omp/pi/opencode/hermes config presets
+
+Model gateway config presets for all four agent harnesses, pointing at the
+unsigned model gateway (`llm.unsigned.gg/v1`) and local endpoints
+(ollama `:11434`, llama.cpp `:8080`, vLLM `:8000`). Copy-if-absent — never
+clobbers live config. Requires `UNSIGNED_LLM_API_KEY` for gateway access.
+
+### `skills` — agentskills.io symlink installer
+
+Symlinks shared skills into every harness's skills directory (`~/.pi/agent/skills`,
+`~/.config/opencode/skills`, `~/.hermes/skills`, `~/.omp/agent/skills`,
+`~/.agents/skills`). Idempotent — re-runs only add new skills.
+
+### `local-models` — hardware probe script
+
+Detects GPU VRAM, CPU cores, and RAM → recommends a model tier (HIGH/MEDIUM/
+ENTRY/LIGHT/CPU-ONLY) and serving backend. All harness presets are pre-wired
+to the fixed serving ports.
 
 ## Terrarium federation
 

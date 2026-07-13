@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { detectProject, type ProjectType } from "./detect.ts";
 import { ALL_COMPONENTS, getTemplateFiles, type Component, type TemplateFile } from "./templates.ts";
@@ -137,6 +137,10 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 				hooks: ".claude/hooks/ (guard-main-push, ci-gate, lint-on-edit)",
 				lefthook: "lefthook.yml (gitleaks, conventional commits, affected CI)",
 				impeccable: ".impeccable.md (design context placeholder)",
+				terminal: "overflow.toml + ghostty config (agent-aware terminal)",
+				harness: "omp/pi/opencode/hermes config presets (model gateway)",
+				skills: "agentskills.io symlink installer (shared across harnesses)",
+				"local-models": "hardware probe script (GPU/VRAM → model tier)",
 			};
 			const yes = await confirm(`  ${component} ${dim(desc[component])}`, true);
 			if (yes) selected.add(component);
@@ -238,18 +242,27 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 		}
 	}
 
-	// 6. Make hooks executable
-	if (components.includes("hooks") && !opts.dryRun) {
-		write(`\n${blue("◆")} ${bold("Making hooks executable")}\n`);
-		const hookPaths = [".claude/hooks/guard-main-push.sh", ".claude/hooks/ci-gate.sh", ".claude/hooks/lint-on-edit.sh"];
-		for (const hookPath of hookPaths) {
-			const fullPath = join(cwd, hookPath);
+	// 6. Make scripts executable (hooks + terminal integration + skills + probe)
+	const executableScripts = [
+		...(components.includes("hooks") ? [
+			".claude/hooks/guard-main-push.sh",
+			".claude/hooks/ci-gate.sh",
+			".claude/hooks/lint-on-edit.sh",
+		] : []),
+		...(components.includes("terminal") ? [".config/overflow/shell-integration/bash.sh"] : []),
+		...(components.includes("skills") ? [".agent-config/skills/install.sh"] : []),
+		...(components.includes("local-models") ? [".agent-config/local-models/probe.sh"] : []),
+	];
+	if (executableScripts.length > 0 && !opts.dryRun) {
+		write(`\n${blue("◆")} ${bold("Making scripts executable")}\n`);
+		for (const scriptPath of executableScripts) {
+			const fullPath = join(cwd, scriptPath);
 			if (existsSync(fullPath)) {
 				try {
-					await import("node:fs/promises").then((fs) => fs.chmod(fullPath, 0o755));
-					write(`  ${CHECK} ${dim("chmod +x")} ${hookPath}\n`);
+					chmodSync(fullPath, 0o755);
+					write(`  ${CHECK} ${dim("chmod +x")} ${scriptPath}\n`);
 				} catch {
-					write(`  ${SKIP} ${dim("chmod skipped")} ${hookPath}\n`);
+					write(`  ${SKIP} ${dim("chmod skipped")} ${scriptPath}\n`);
 				}
 			}
 		}
@@ -259,6 +272,31 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 	if (components.includes("lefthook") && !opts.dryRun) {
 		write(`\n${blue("◆")} ${bold("Lefthook")}\n`);
 		write(`  ${dim("Run")} \`lefthook install\` ${dim("if lefthook is installed, to wire git hooks.")}\n`);
+	}
+
+	// 8. Next-steps guidance for agent tooling
+	const hasAgentTooling = components.some((c) => c === "terminal" || c === "harness" || c === "skills" || c === "local-models");
+	if (hasAgentTooling && !opts.dryRun) {
+		write(`\n${blue("◆")} ${bold("Agent tooling setup")}\n`);
+		if (components.includes("harness")) {
+			write(`  ${dim("Config presets written to")} .agent-config/\n`);
+			write(`  ${dim("Seed to home dirs:")} cp -n .agent-config/omp/models.yml ~/.omp/agent/models.yml\n`);
+			write(`  ${dim("                ")} cp -n .agent-config/pi/models.json ~/.pi/agent/models.json\n`);
+			write(`  ${dim("                ")} cp -n .agent-config/opencode/opencode.json ~/.config/opencode/opencode.json\n`);
+			write(`  ${dim("                ")} cp -n .agent-config/hermes/cli-config.yaml ~/.hermes/cli-config.yaml\n`);
+			write(`  ${dim("Set")} UNSIGNED_LLM_API_KEY ${dim("for gateway access (llm.unsigned.gg/v1)")}\n`);
+		}
+		if (components.includes("terminal")) {
+			write(`  ${dim("Terminal configs in")} .config/overflow/ ${dim("and")} .config/ghostty/\n`);
+			write(`  ${dim("Install overflow:")} cargo install overflow ${dim("(or from releases)")}\n`);
+			write(`  ${dim("Install ghostty:")}  https://ghostty.org\n`);
+		}
+		if (components.includes("skills")) {
+			write(`  ${dim("Run")} .agent-config/skills/install.sh ${dim("to symlink skills into all harness dirs")}\n`);
+		}
+		if (components.includes("local-models")) {
+			write(`  ${dim("Run")} .agent-config/local-models/probe.sh ${dim("to detect GPU + recommend model tier")}\n`);
+		}
 	}
 
 	return result;
@@ -347,7 +385,8 @@ ${bold("OPTIONS")}
   ${dim("--yes, -y")}         Skip all prompts, use defaults / detected values
   ${dim("--type <type>")}     Override detection: rust|node|python|go|monorepo
   ${dim("--name <name>")}     Project name (defaults to directory name)
-  ${dim("--only <a,b,c>")}    Install only: claude,hooks,lefthook,impeccable
+  ${dim("--only <a,b,c>")}    Install only: claude,hooks,lefthook,impeccable,
+                         terminal,harness,skills,local-models
   ${dim("--force, -f")}       Overwrite existing files without prompting
   ${dim("--dry-run")}         Show what would be installed without writing
   ${dim("--cwd <path>")}     Target directory (defaults to current directory)
@@ -363,14 +402,21 @@ ${bold("EXAMPLES")}
   ${dim("# Install only specific components")}
   npx @unsigned-gg/create --only claude,hooks
 
+  ${dim("# Full agentic tooling")}
+  npx @unsigned-gg/create --only terminal,harness,skills,local-models
+
   ${dim("# Dry run")}
   npx @unsigned-gg/create --dry-run
 
 ${bold("COMPONENTS")}
-  ${dim("claude")}       CLAUDE.md + .claude/settings.json + .claude/README.md
-  ${dim("hooks")}        .claude/hooks/ (guard-main-push, ci-gate, lint-on-edit)
-  ${dim("lefthook")}     lefthook.yml (gitleaks, conventional commits, affected CI)
-  ${dim("impeccable")}   .impeccable.md (design context placeholder)
+  ${dim("claude")}          CLAUDE.md + .claude/settings.json + .claude/README.md
+  ${dim("hooks")}           .claude/hooks/ (guard-main-push, ci-gate, lint-on-edit)
+  ${dim("lefthook")}        lefthook.yml (gitleaks, conventional commits, affected CI)
+  ${dim("impeccable")}     .impeccable.md (design context placeholder)
+  ${dim("terminal")}       overflow.toml + ghostty config (agent-aware terminal)
+  ${dim("harness")}        omp/pi/opencode/hermes config presets (model gateway)
+  ${dim("skills")}         agentskills.io symlink installer (shared across harnesses)
+  ${dim("local-models")}   hardware probe script (GPU/VRAM → model tier)
 `;
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
