@@ -1,0 +1,22 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'library'
+
+project:
+  name: 'context'
+  description: 'Estate orientation context — authored once, rendered into omp AGENTS.md/RULES.md and the Claude Code estate import'
+
+tasks:
+  lint:
+    command: 'shellcheck render.sh'
+    inputs:
+      - 'render.sh'
+  render:
+    command: 'bash render.sh'
+    inputs:
+      - 'render.sh'
+      - 'estate.md'
+      - 'invariants.md'
+      - 'omp-prelude.md'
+    options:
+      cache: false
