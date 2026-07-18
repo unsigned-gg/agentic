@@ -8,6 +8,8 @@ importers:
 
   .: {}
 
+  packages/create: {}
+
   packages/harness-opencode:
     devDependencies:
       '@opencode-ai/plugin':

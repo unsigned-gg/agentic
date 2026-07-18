@@ -1,0 +1,22 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 5d082f7..d20c24d 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -44,7 +44,7 @@ dependencies = [
+ 
+ [project.optional-dependencies]
+ gpu = [
+-    "torch==2.6.0+cu124",
++    "torch==2.7.1+cu128",
+ ]
+ cpu = [
+     "torch==2.6.0",
+@@ -79,7 +79,7 @@ explicit = true
+ 
+ [[tool.uv.index]]
+ name = "pytorch-cuda"
+-url = "https://download.pytorch.org/whl/cu124"
++url = "https://download.pytorch.org/whl/cu128"
+ explicit = true
+ 
+ [build-system]

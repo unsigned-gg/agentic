@@ -1,0 +1,36 @@
+model_list:
+  # tts-1 alias: lets voicemode use one model name for both this shim and the
+  # kokoro fallback (kokoro 400s on unknown model names).
+  - model_name: tts-1
+    litellm_params:
+      model: elevenlabs/eleven_flash_v2_5
+      api_key: os.environ/ELEVENLABS_API_KEY
+      # Pro plan $99/mo / 1.5M credits = $0.000066/credit; flash = 0.5 credit/char
+      input_cost_per_character: 0.000033
+    model_info:
+      mode: audio_speech
+      cache_creation_input_token_cost: 0
+      cache_read_input_token_cost: 0
+  - model_name: elevenlabs-tts
+    litellm_params:
+      model: elevenlabs/eleven_flash_v2_5
+      api_key: os.environ/ELEVENLABS_API_KEY
+      # Pro plan $99/mo / 1.5M credits = $0.000066/credit; flash = 0.5 credit/char
+      input_cost_per_character: 0.000033
+    model_info:
+      mode: audio_speech
+      cache_creation_input_token_cost: 0
+      cache_read_input_token_cost: 0
+  - model_name: elevenlabs-tts-hq
+    litellm_params:
+      model: elevenlabs/eleven_multilingual_v2
+      api_key: os.environ/ELEVENLABS_API_KEY
+      # Pro plan $99/mo / 1.5M credits = $0.000066/credit; multilingual_v2 = 1 credit/char
+      input_cost_per_character: 0.000066
+    model_info:
+      mode: audio_speech
+      cache_creation_input_token_cost: 0
+      cache_read_input_token_cost: 0
+
+litellm_settings:
+  drop_params: true
