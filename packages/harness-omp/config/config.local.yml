@@ -50,7 +50,7 @@ includeWorkspaceTree: false
 # shared set from packages/skills/. A bun test keeps this list in sync with
 # the packages/skills directory listing.
 skills:
-  includeSkills: [local-model-triage]
+  includeSkills: [estate-orient, local-model-triage]
   enablePiUser: true    # ~/.omp/agent/skills (omp-native user dir)
   enablePiProject: true # .omp/skills in-repo
   enableClaudeUser: false

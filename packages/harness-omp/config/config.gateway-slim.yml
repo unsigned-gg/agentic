@@ -26,7 +26,7 @@ modelRoles:
 
 # --- skill discovery scoping (the ~16.5k lever; tools deliberately untouched) -
 skills:
-  includeSkills: [local-model-triage]
+  includeSkills: [estate-orient, local-model-triage]
   enablePiUser: true    # ~/.omp/agent/skills (omp-native user dir)
   enablePiProject: true # .omp/skills in-repo
   enableClaudeUser: false
