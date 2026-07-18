@@ -37,7 +37,11 @@ VOICEMODE_TTS_BASE_URLS=http://127.0.0.1:4000/v1,http://127.0.0.1:8880/v1
 VOICEMODE_TTS_MODELS=tts-1
 VOICEMODE_VOICES=FGY2WhTYpPnrIDTdsKH5,af_sky   # Laura (ElevenLabs voice_id)
 VOICEMODE_STREAMING_ENABLED=true
-VOICEMODE_TTS_AUDIO_FORMAT=pcm
+# mp3, NOT pcm: voicemode hardcodes SAMPLE_RATE=24000 for raw PCM, but
+# ElevenLabs pcm through LiteLLM is 44.1 kHz -> slow, muffled playback.
+# mp3 self-describes its rate. (litellm_params output_format can't fix it;
+# request params win.)
+VOICEMODE_TTS_AUDIO_FORMAT=mp3
 ```
 
 **Fallback voice alias:** the primary voice is a raw ElevenLabs voice_id,
