@@ -10,6 +10,6 @@
   },
   "devDependencies": {
     "@opencode-ai/plugin": "1.17.13",
-    "typescript": "5.7.2"
+    "typescript": "7.0.2"
   }
 }
