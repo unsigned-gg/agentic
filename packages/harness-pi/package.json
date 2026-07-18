@@ -9,7 +9,7 @@
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
-    "@earendil-works/pi-coding-agent": "0.80.3",
+    "@earendil-works/pi-coding-agent": "0.80.10",
     "typescript": "5.7.2"
   }
 }
