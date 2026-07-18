@@ -138,11 +138,21 @@ shepherd run changeset <run> --read <path> > <path>   # one file at a time
 
 or batch-extract with a loop. The retained changeset is the source of truth;
 `select`/`release`/`discard` are settlement actions, not filesystem
-materialization — a gap inherent to the world/custody model. 0.3.0 adds a
-fourth verb, `apply` (three-way-merge of a run's delta onto a workspace that
-moved on, fail-closed on overlap); whether it also materializes the working
-tree has NOT been live-exercised here yet — until verified, keep using the
-changeset-extract flow below.
+materialization — a gap inherent to the world/custody model. 0.3.0's fourth
+verb, `apply` (three-way merge of a run's delta onto a workspace that moved
+on, fail-closed on overlap), behaves the same way — **live-verified
+2026-07-11: `apply` does NOT materialize the working tree.** `shepherd run
+apply <run>` on a retained run settled the output (`unconsumed` → `applied`,
+settlement action `applied`) and advanced the vcs-core parent world
+(`parent_world_before` → `parent_world_after`; the merged candidate commit
+inside `.vcscore/world-vectors/substrates/workspace.git` contains the run's
+file under `workspace/`), but the real working tree was identical before and
+after — file absent, `git status` unchanged, no commit on the repo's own
+refs. What `apply` buys you is world propagation, not files: a run started
+*after* the apply forks from the advanced parent world and sees the applied
+paths in its basis. All four verbs settle custody inside `.vcscore/`; the
+changeset-extract flow above remains the only way to get files into the
+working tree.
 
 ### Pre-flight checklist for a real agent run
 
@@ -159,9 +169,9 @@ changeset-extract flow below.
 3. Patch the budget (§1) if the task involves edits + compile/test cycles.
 4. After the run: `shepherd run show <run>` (enforcement, terminal status),
    `shepherd run changeset --latest` (files), `--read <path>` (content).
-5. To apply: extract files from the changeset (§3), `cargo check` / test,
-   then `git add` + commit. `select` is optional — it's a settlement record,
-   not the materialization step.
+5. To land the changes in the working tree: extract files from the changeset
+   (§3), `cargo check` / test, then `git add` + commit. `select`/`apply` are
+   optional settlement records, not the materialization step (§3).
 
 ## Verified
 
@@ -192,7 +202,22 @@ shellcheck, ruff. Exercised live on WSL2 (0.2.1 on 2026-07-06, 0.3.0 bump on
   `released`). Known limitation unchanged: worktree adoption still hard-fails
   on tracked symlinks and gitlinks (re-confirmed on 4 repos; OPS-524,
   upstream `_workspace_external.py` raises on both).
+- **0.3.0 jailed live-claude smoke** (2026-07-11, WSL2 kernel 6.6.87.2):
+  `shepherd demo write agent-task` ran end-to-end — `run show` reports
+  `enforcement: jail (launch_confined_attempted)`, auth rode
+  `ANTHROPIC_API_KEY`, `donut.py` retained (nothing applied to the tree),
+  program executed straight from the changeset
+  (`shepherd run changeset <run> --read donut.py | python3 -`), settled
+  `discarded`.
+- **0.3.0 `apply` verdict** (2026-07-11): on a retained static-provider run,
+  `shepherd run apply <run>` exited 0 with settlement action `applied` and
+  advanced the vcs-core parent world (merged candidate commit in
+  `.vcscore/world-vectors/substrates/workspace.git` contains the run's file),
+  while the working tree stayed byte-identical — no file materialized, no
+  `git status` change, no commit. A subsequent run forked from the advanced
+  parent world and carried the applied path in its basis. Confirms §3:
+  `apply`, like the other three verbs, settles custody inside `.vcscore/`
+  only; changeset-extract remains the materialization path.
 
 Needs live exercise per-host: jail availability (kernel-dependent) and claude
-auth — both reported by `shepherd doctor claude`. Not yet exercised on 0.3.0:
-the jailed live-claude lane and the new `apply` settlement verb.
+auth — both reported by `shepherd doctor claude`.
