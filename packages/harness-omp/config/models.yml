@@ -17,15 +17,15 @@ providers:
     models:
       # crusoe
       - id: zai/GLM-5.2
-        contextWindow: 200000
+        contextWindow: 1000000
         reasoning: true
       - id: deepseek-ai/DeepSeek-V4-Pro
-        contextWindow: 131072
+        contextWindow: 1000000
         reasoning: true
       - id: Qwen/Qwen3-235B-A22B-Instruct-2507
         contextWindow: 262144
       - id: moonshotai/Kimi-K2.6
-        contextWindow: 131072
+        contextWindow: 262144
       # openrouter (context per live catalog 2026-07-07)
       - id: openai/gpt-5.5
         contextWindow: 1050000
@@ -73,43 +73,43 @@ providers:
       # mirror their base model's contextWindow; new-model windows are the
       # families' published values.
       - id: glm-5.2
-        contextWindow: 200000
+        contextWindow: 1000000
         reasoning: true
       - id: glm-5.2-fast
-        contextWindow: 200000
+        contextWindow: 1000000
         reasoning: true
       - id: glm-5.2-flex
-        contextWindow: 200000
+        contextWindow: 1000000
         reasoning: true
       - id: glm-5.2-short
-        contextWindow: 200000
+        contextWindow: 199984
         reasoning: true
       - id: glm-5.2-short-fast
-        contextWindow: 200000
+        contextWindow: 199984
         reasoning: true
       - id: glm-5.2-short-fast-flex
-        contextWindow: 200000
+        contextWindow: 199984
         reasoning: true
       - id: glm-5.2-short-flex
-        contextWindow: 200000
+        contextWindow: 199984
         reasoning: true
       - id: zai/GLM-5.1
         contextWindow: 200000
         reasoning: true
       - id: kimi-k2.6
-        contextWindow: 131072
+        contextWindow: 262144
       - id: kimi-k2.6-fast
-        contextWindow: 131072
+        contextWindow: 262144
       - id: kimi-k2.6-flex
-        contextWindow: 131072
+        contextWindow: 262144
       - id: kimi-k2.7-code
         contextWindow: 262144
       - id: kimi-k2.7-code-flex
         contextWindow: 262144
       - id: deepseek-ai/DeepSeek-V3-0324
-        contextWindow: 131072
+        contextWindow: 163840
       - id: deepseek-ai/Deepseek-V4-Flash
-        contextWindow: 131072
+        contextWindow: 1000000
         reasoning: true
       - id: google/gemma-4-31b-it
         contextWindow: 131072
@@ -126,9 +126,9 @@ providers:
       - id: qwen3.5-397b-fast
         contextWindow: 262144
       - id: qwen3.6-35b
-        contextWindow: 262144
+        contextWindow: 131072
       - id: qwen3.6-35b-fast
-        contextWindow: 262144
+        contextWindow: 131072
       - id: yutori/n1.5
         contextWindow: 131072
   ollama:

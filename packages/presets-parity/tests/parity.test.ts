@@ -91,9 +91,9 @@ describe("gateway preset parity", () => {
   );
 
   // OPS-732: preset contextWindows vs the gateway's /model/info metadata.
-  // WARNS (does not fail) on mismatch while /model/info coverage is sparse —
-  // once the LiteLLM config carries max_input_tokens for every model (the
-  // paas-side half of OPS-732), promote the warning to an assertion.
+  // ASSERTS since 2026-07-18: the paas-side enrichment (unsigned-paas#1449,
+  // chart 0.4.13) made /model/info authoritative for all 41 catalog models —
+  // max_input_tokens is the source of truth and presets must match it.
   test.if(process.env.PARITY_LIVE === "1")(
     "preset contextWindows match /model/info where metadata exists",
     async () => {
@@ -126,13 +126,14 @@ describe("gateway preset parity", () => {
         covered++;
         if (preset !== max) drifted.push(`${m.model_name}: preset=${preset} model_info=${max}`);
       }
-      if (drifted.length > 0) {
-        console.warn(
-          `[parity] contextWindow drift vs /model/info (${drifted.length}/${covered} covered ids):\n  ${drifted.join("\n  ")}`,
-        );
-      }
-      // Hard assertion deferred until /model/info covers the full catalog.
-      expect(covered).toBeGreaterThanOrEqual(0);
+      expect(
+        drifted,
+        `contextWindow drift vs /model/info (${covered} covered ids)`,
+      ).toEqual([]);
+      // Coverage floor: the gateway must keep serving metadata for the
+      // catalog (a silent coverage collapse would make the drift check
+      // vacuous). 41 ids enriched as of chart 0.4.13.
+      expect(covered).toBeGreaterThanOrEqual(30);
     },
   );
 });
