@@ -40,6 +40,10 @@ start of infra work.
 - `todie/agentic` — harness configs (pi/opencode/hermes/omp), shared skills,
   local-model serving, this brief's source (`packages/context/`).
 - `cerebral/terrarium` — moon-monorepo incubator + node registry (CANON.md).
+- `cerebral/os` (cerebral-work/os) — soma build home: the agentic OS (reflex
+  gate plane, trust-ledger, per-user hermes function-agent runtime, deck, cli,
+  spec). SCAFFOLD as of 2026-07-18; verbs route through reflex once Phase 1
+  lands. Read its CANON.md + docs/soma/ARCHITECTURE.md before touching.
 - `reverie-cloud` (cerebral-work org) — Cloudflare Worker: alert webhooks, EA.
 - Others: `cadastre` (CF/DNS IaC), `escapement`, `unsigned/gg` (GH org+repo
   `unsigned-gg` — design canon), `linearctl` (headless Linear CLI). herdr
