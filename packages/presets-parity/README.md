@@ -26,11 +26,12 @@ on a weekly schedule (`.github/workflows/parity-live.yml`, Mon 06:17 UTC +
 (gateway virtual key; 1P item `unsigned-llm` — never committed). A red
 scheduled run means the gateway catalog drifted from the presets (OPS-729).
 
-The live run also compares preset `contextWindow`s against the gateway's
-`/v1/model/info` metadata (OPS-732): mismatches are **warned**, not failed,
-while `max_input_tokens` coverage is sparse. Once the LiteLLM config carries
-metadata for the full catalog (paas-side half of OPS-732), promote the
-warning to an assertion.
+The live run also **asserts** preset `contextWindow`s equal the gateway's
+`/v1/model/info` `max_input_tokens` (OPS-732; authoritative since
+unsigned-paas#1449 / chart 0.4.13 enriched all 41 catalog models), with a
+coverage floor so a silent metadata collapse can't make the check vacuous.
+On drift: fix the paas values first if the gateway is wrong, else align the
+presets — /model/info is the source of truth.
 
 ## Verified
 
