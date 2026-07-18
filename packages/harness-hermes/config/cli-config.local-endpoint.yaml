@@ -47,6 +47,36 @@ providers:
       - claude-opus-4-8
       - morph-v3-fast                          # MorphLLM fast-apply
       - morph-glm52-744b
+      - nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B  # NVIDIA upstream (gateway)
+      - nvidia/NVIDIA-Nemotron-3-Super-120B-A12B
+      - nvidia/NVIDIA-Nemotron-3-Ultra-550B
+      - nvidia/Nemotron-3-Nano-Omni-Reasoning-30B-A3B
+      # Full live-catalog sync (2026-07-18): gateway alias + lane ids and
+      # remaining hosted models, so every served id resolves here too.
+      - glm-5.2
+      - glm-5.2-fast
+      - glm-5.2-flex
+      - glm-5.2-short
+      - glm-5.2-short-fast
+      - glm-5.2-short-fast-flex
+      - glm-5.2-short-flex
+      - zai/GLM-5.1
+      - kimi-k2.6
+      - kimi-k2.6-fast
+      - kimi-k2.6-flex
+      - kimi-k2.7-code
+      - kimi-k2.7-code-flex
+      - deepseek-ai/DeepSeek-V3-0324
+      - deepseek-ai/Deepseek-V4-Flash
+      - google/gemma-4-31b-it
+      - meta-llama/Llama-3.3-70B-Instruct
+      - minimax/minimax-m2.7
+      - openai/gpt-oss-120b
+      - qwen3.5-397b
+      - qwen3.5-397b-fast
+      - qwen3.6-35b
+      - qwen3.6-35b-fast
+      - yutori/n1.5
 
 # Alternate local endpoints (swap `api`):
 #   llama.cpp: http://localhost:8080/v1   (serve/serve-llamacpp.sh)

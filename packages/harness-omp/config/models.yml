@@ -51,6 +51,86 @@ providers:
         contextWindow: 32768
       - id: morph-glm52-744b
         contextWindow: 1000000
+      # nemotron via the gateway (NVIDIA upstream; streams verified incl.
+      # tools+reasoning 2026-07-18). Added after omp fell through to the
+      # catalog's baseten/coreweave direct wiring with unset keys — the
+      # "stream timed out waiting for first event" failure in reverie.
+      - id: nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B
+        contextWindow: 131072
+        reasoning: true
+      - id: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B
+        contextWindow: 131072
+        reasoning: true
+      - id: nvidia/NVIDIA-Nemotron-3-Ultra-550B
+        contextWindow: 200000
+        reasoning: true
+      - id: nvidia/Nemotron-3-Nano-Omni-Reasoning-30B-A3B
+        contextWindow: 131072
+        reasoning: true
+      # Full live-catalog sync (2026-07-18, operator directive): every id the
+      # gateway serves resolves in every preset, so no name can fall through
+      # to the built-in vendor-direct catalog wiring. Gateway alias/lane ids
+      # mirror their base model's contextWindow; new-model windows are the
+      # families' published values.
+      - id: glm-5.2
+        contextWindow: 200000
+        reasoning: true
+      - id: glm-5.2-fast
+        contextWindow: 200000
+        reasoning: true
+      - id: glm-5.2-flex
+        contextWindow: 200000
+        reasoning: true
+      - id: glm-5.2-short
+        contextWindow: 200000
+        reasoning: true
+      - id: glm-5.2-short-fast
+        contextWindow: 200000
+        reasoning: true
+      - id: glm-5.2-short-fast-flex
+        contextWindow: 200000
+        reasoning: true
+      - id: glm-5.2-short-flex
+        contextWindow: 200000
+        reasoning: true
+      - id: zai/GLM-5.1
+        contextWindow: 200000
+        reasoning: true
+      - id: kimi-k2.6
+        contextWindow: 131072
+      - id: kimi-k2.6-fast
+        contextWindow: 131072
+      - id: kimi-k2.6-flex
+        contextWindow: 131072
+      - id: kimi-k2.7-code
+        contextWindow: 262144
+      - id: kimi-k2.7-code-flex
+        contextWindow: 262144
+      - id: deepseek-ai/DeepSeek-V3-0324
+        contextWindow: 131072
+      - id: deepseek-ai/Deepseek-V4-Flash
+        contextWindow: 131072
+        reasoning: true
+      - id: google/gemma-4-31b-it
+        contextWindow: 131072
+      - id: meta-llama/Llama-3.3-70B-Instruct
+        contextWindow: 131072
+      - id: minimax/minimax-m2.7
+        contextWindow: 200000
+        reasoning: true
+      - id: openai/gpt-oss-120b
+        contextWindow: 131072
+        reasoning: true
+      - id: qwen3.5-397b
+        contextWindow: 262144
+      - id: qwen3.5-397b-fast
+        contextWindow: 262144
+      - id: qwen3.6-35b
+        contextWindow: 262144
+      - id: qwen3.6-35b-fast
+        contextWindow: 262144
+      - id: yutori/n1.5
+        contextWindow: 131072
   ollama:
     baseUrl: http://localhost:11434/v1
     api: openai-completions

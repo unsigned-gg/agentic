@@ -47,6 +47,90 @@
         },
         "morph-glm52-744b": {
           "name": "Morph GLM-5.2 744B"
+        },
+        "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B": {
+          "name": "Nemotron 3 Nano 30B-A3B (NVIDIA)"
+        },
+        "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B": {
+          "name": "Nemotron 3 Super 120B-A12B (NVIDIA)"
+        },
+        "nvidia/NVIDIA-Nemotron-3-Ultra-550B": {
+          "name": "Nemotron 3 Ultra 550B (NVIDIA)"
+        },
+        "nvidia/Nemotron-3-Nano-Omni-Reasoning-30B-A3B": {
+          "name": "Nemotron 3 Nano Omni Reasoning 30B-A3B (NVIDIA)"
+        },
+        "glm-5.2": {
+          "name": "GLM-5.2 (gateway alias)"
+        },
+        "glm-5.2-fast": {
+          "name": "GLM-5.2 — fast lane"
+        },
+        "glm-5.2-flex": {
+          "name": "GLM-5.2 — flex lane"
+        },
+        "glm-5.2-short": {
+          "name": "GLM-5.2 — short lane"
+        },
+        "glm-5.2-short-fast": {
+          "name": "GLM-5.2 — short+fast lane"
+        },
+        "glm-5.2-short-fast-flex": {
+          "name": "GLM-5.2 — short+fast+flex lane"
+        },
+        "glm-5.2-short-flex": {
+          "name": "GLM-5.2 — short+flex lane"
+        },
+        "zai/GLM-5.1": {
+          "name": "GLM-5.1"
+        },
+        "kimi-k2.6": {
+          "name": "Kimi K2.6 (gateway alias)"
+        },
+        "kimi-k2.6-fast": {
+          "name": "Kimi K2.6 — fast lane"
+        },
+        "kimi-k2.6-flex": {
+          "name": "Kimi K2.6 — flex lane"
+        },
+        "kimi-k2.7-code": {
+          "name": "Kimi K2.7 Code (gateway alias)"
+        },
+        "kimi-k2.7-code-flex": {
+          "name": "Kimi K2.7 Code — flex lane"
+        },
+        "deepseek-ai/DeepSeek-V3-0324": {
+          "name": "DeepSeek V3 (0324)"
+        },
+        "deepseek-ai/Deepseek-V4-Flash": {
+          "name": "DeepSeek V4 Flash"
+        },
+        "google/gemma-4-31b-it": {
+          "name": "Gemma 4 31B IT"
+        },
+        "meta-llama/Llama-3.3-70B-Instruct": {
+          "name": "Llama 3.3 70B Instruct"
+        },
+        "minimax/minimax-m2.7": {
+          "name": "MiniMax M2.7"
+        },
+        "openai/gpt-oss-120b": {
+          "name": "GPT-OSS 120B"
+        },
+        "qwen3.5-397b": {
+          "name": "Qwen3.5 397B"
+        },
+        "qwen3.5-397b-fast": {
+          "name": "Qwen3.5 397B — fast lane"
+        },
+        "qwen3.6-35b": {
+          "name": "Qwen3.6 35B"
+        },
+        "qwen3.6-35b-fast": {
+          "name": "Qwen3.6 35B — fast lane"
+        },
+        "yutori/n1.5": {
+          "name": "Yutori N1.5"
         }
       }
     },
