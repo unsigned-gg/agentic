@@ -63,9 +63,14 @@ Plugin-launch bug filed upstream: mbailey/voicemode#504.
   `~/.voicemode/services/kokoro/` (its `start-gpu.sh` reinstalls from
   pyproject on every boot, so the pin must live there):
   `git -C ~/.voicemode/services/kokoro apply <patch> && systemctl --user restart voicemode-kokoro`
-- **`fix-voicemode-plugin-python.sh`** — re-pin Python 3.12 for the voicemode
-  Claude Code plugin after plugin updates (Python 3.14 breaks the
-  pydantic-core build → MCP -32000).
+- **voicemode MCP -32000 — the actual root cause is cwd, not just Python.**
+  Claude Code spawns plugin MCP servers with cwd = the user's project dir, so
+  the plugin's `uv run voicemode` finds neither a project nor the command
+  (`Failed to spawn: voicemode, os error 2`). Durable fix (survives plugin
+  updates, any cwd): `uv tool install voice-mode --python 3.12`. The
+  Python 3.14 pydantic-core build failure (mbailey/voicemode#504) is a
+  second, independent blocker for in-plugin-dir launches —
+  **`fix-voicemode-plugin-python.sh`** re-pins 3.12 there after updates.
 
 ## Known limits
 
