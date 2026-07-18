@@ -1,7 +1,18 @@
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+	chmodSync,
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { detectProject, type ProjectType } from "./detect.ts";
-import { ALL_COMPONENTS, getTemplateFiles, type Component, type TemplateFile } from "./templates.ts";
+import {
+	ALL_COMPONENTS,
+	type Component,
+	getTemplateFiles,
+	type TemplateFile,
+} from "./templates.ts";
 
 // ─── ANSI ──────────────────────────────────────────────────────────────────
 
@@ -14,13 +25,27 @@ const BLUE = "\x1b[34m";
 const RED = "\x1b[31m";
 const CYAN = "\x1b[36m";
 
-function bold(s: string): string { return `${BOLD}${s}${RESET}`; }
-function dim(s: string): string { return `${DIM}${s}${RESET}`; }
-function green(s: string): string { return `${GREEN}${s}${RESET}`; }
-function yellow(s: string): string { return `${YELLOW}${s}${RESET}`; }
-function blue(s: string): string { return `${BLUE}${s}${RESET}`; }
-function red(s: string): string { return `${RED}${s}${RESET}`; }
-function cyan(s: string): string { return `${CYAN}${s}${RESET}`; }
+function bold(s: string): string {
+	return `${BOLD}${s}${RESET}`;
+}
+function dim(s: string): string {
+	return `${DIM}${s}${RESET}`;
+}
+function green(s: string): string {
+	return `${GREEN}${s}${RESET}`;
+}
+function yellow(s: string): string {
+	return `${YELLOW}${s}${RESET}`;
+}
+function blue(s: string): string {
+	return `${BLUE}${s}${RESET}`;
+}
+function red(s: string): string {
+	return `${RED}${s}${RESET}`;
+}
+function cyan(s: string): string {
+	return `${CYAN}${s}${RESET}`;
+}
 
 // ─── Banner ─────────────────────────────────────────────────────────────────
 
@@ -43,19 +68,26 @@ function readline(): Promise<string> {
 		process.stdin.resume();
 		process.stdin.once("data", (data) => {
 			process.stdin.pause();
-			resolvePromise(data.trim());
+			resolvePromise(String(data).trim());
 		});
 	});
 }
 
-async function prompt(question: string, defaultValue?: string): Promise<string> {
-	const hint = defaultValue !== undefined ? ` ${dim(`(${defaultValue})`)} ` : " ";
+async function prompt(
+	question: string,
+	defaultValue?: string,
+): Promise<string> {
+	const hint =
+		defaultValue !== undefined ? ` ${dim(`(${defaultValue})`)} ` : " ";
 	write(`${question}${hint}${dim("›")} `);
 	const answer = await readline();
 	return answer || defaultValue || "";
 }
 
-async function confirm(question: string, defaultValue: boolean = false): Promise<boolean> {
+async function confirm(
+	question: string,
+	defaultValue: boolean = false,
+): Promise<boolean> {
 	const hint = defaultValue ? `${dim("[Y/n]")}` : `${dim("[y/N]")}`;
 	write(`${question} ${hint} `);
 	const answer = (await readline()).toLowerCase();
@@ -63,16 +95,22 @@ async function confirm(question: string, defaultValue: boolean = false): Promise
 	return answer === "y" || answer === "yes";
 }
 
-async function select<T extends string>(question: string, options: readonly T[], defaultOption: T): Promise<T> {
+async function select<T extends string>(
+	question: string,
+	options: readonly T[],
+	defaultOption: T,
+): Promise<T> {
 	write(`${question}\n`);
 	for (let i = 0; i < options.length; i++) {
-		const marker = options[i] === defaultOption ? `${green("◆")}` : `${dim("○")}`;
+		const marker =
+			options[i] === defaultOption ? `${green("◆")}` : `${dim("○")}`;
 		write(`  ${marker} ${dim(`[${i + 1}]`)} ${options[i]}\n`);
 	}
 	write(`${dim("›")} `);
 	const answer = await readline();
 	const idx = Number.parseInt(answer, 10) - 1;
-	if (Number.isNaN(idx) || idx < 0 || idx >= options.length) return defaultOption;
+	if (Number.isNaN(idx) || idx < 0 || idx >= options.length)
+		return defaultOption;
 	return options[idx] ?? defaultOption;
 }
 
@@ -86,9 +124,11 @@ const SKIP = dim("·");
 
 export interface InstallOptions {
 	cwd: string;
-	type?: ProjectType;
-	name?: string;
-	components?: Component[];
+	// `| undefined` is deliberate: callers forward optional CLI args verbatim
+	// under exactOptionalPropertyTypes.
+	type?: ProjectType | undefined;
+	name?: string | undefined;
+	components?: Component[] | undefined;
 	yes: boolean;
 	force: boolean;
 	dryRun: boolean;
@@ -118,9 +158,16 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 		write("\n");
 
 		if (opts.type === undefined && detected.signals.length === 0) {
-			const correct = await confirm(`${yellow("!")} No project markers found. Is this a ${type} project?`, true);
+			const correct = await confirm(
+				`${yellow("!")} No project markers found. Is this a ${type} project?`,
+				true,
+			);
 			if (!correct) {
-				const newType = await select("Select project type:", ["rust", "node", "python", "go", "monorepo"] as const, "node" as const);
+				const newType = await select(
+					"Select project type:",
+					["rust", "node", "python", "go", "monorepo"] as const,
+					"node" as const,
+				);
 				return install({ ...opts, type: newType, yes: false });
 			}
 		}
@@ -160,7 +207,9 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 
 	// 4. Show plan
 	if (!opts.yes) {
-		write(`${blue("◆")} ${bold("Files to install")} ${dim(`(${files.length})`)}\n`);
+		write(
+			`${blue("◆")} ${bold("Files to install")} ${dim(`(${files.length})`)}\n`,
+		);
 		for (const file of files) {
 			const exists = existsSync(join(cwd, file.path));
 			const status = exists ? yellow("(exists)") : green("(new)");
@@ -193,7 +242,10 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 
 		if (exists && !opts.force) {
 			if (!opts.yes) {
-				const overwrite = await confirm(`  ${yellow("!")} Overwrite ${file.path}?`, false);
+				const overwrite = await confirm(
+					`  ${yellow("!")} Overwrite ${file.path}?`,
+					false,
+				);
 				if (!overwrite) {
 					result.skipped.push(file.path);
 					write(`  ${SKIP} ${dim("skipped")} ${file.path}\n`);
@@ -212,7 +264,9 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 			if (existsSync(gitignorePath)) {
 				const existing = readFileSync(gitignorePath, "utf-8");
 				if (!existing.includes(entries.trim())) {
-					const newContent = existing.endsWith("\n") ? existing + "\n" + entries : existing + "\n" + entries;
+					const newContent = existing.endsWith("\n")
+						? existing + "\n" + entries
+						: existing + "\n" + entries;
 					writeFileSync(gitignorePath, newContent);
 					result.written.push(".gitignore (appended)");
 					write(`  ${CHECK} ${dim("appended")} .gitignore\n`);
@@ -244,14 +298,22 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 
 	// 6. Make scripts executable (hooks + terminal integration + skills + probe)
 	const executableScripts = [
-		...(components.includes("hooks") ? [
-			".claude/hooks/guard-main-push.sh",
-			".claude/hooks/ci-gate.sh",
-			".claude/hooks/lint-on-edit.sh",
-		] : []),
-		...(components.includes("terminal") ? [".config/overflow/shell-integration/bash.sh"] : []),
-		...(components.includes("skills") ? [".agent-config/skills/install.sh"] : []),
-		...(components.includes("local-models") ? [".agent-config/local-models/probe.sh"] : []),
+		...(components.includes("hooks")
+			? [
+					".claude/hooks/guard-main-push.sh",
+					".claude/hooks/ci-gate.sh",
+					".claude/hooks/lint-on-edit.sh",
+				]
+			: []),
+		...(components.includes("terminal")
+			? [".config/overflow/shell-integration/bash.sh"]
+			: []),
+		...(components.includes("skills")
+			? [".agent-config/skills/install.sh"]
+			: []),
+		...(components.includes("local-models")
+			? [".agent-config/local-models/probe.sh"]
+			: []),
 	];
 	if (executableScripts.length > 0 && !opts.dryRun) {
 		write(`\n${blue("◆")} ${bold("Making scripts executable")}\n`);
@@ -271,31 +333,57 @@ export async function install(opts: InstallOptions): Promise<InstallResult> {
 	// 7. Wire lefthook
 	if (components.includes("lefthook") && !opts.dryRun) {
 		write(`\n${blue("◆")} ${bold("Lefthook")}\n`);
-		write(`  ${dim("Run")} \`lefthook install\` ${dim("if lefthook is installed, to wire git hooks.")}\n`);
+		write(
+			`  ${dim("Run")} \`lefthook install\` ${dim("if lefthook is installed, to wire git hooks.")}\n`,
+		);
 	}
 
 	// 8. Next-steps guidance for agent tooling
-	const hasAgentTooling = components.some((c) => c === "terminal" || c === "harness" || c === "skills" || c === "local-models");
+	const hasAgentTooling = components.some(
+		(c) =>
+			c === "terminal" ||
+			c === "harness" ||
+			c === "skills" ||
+			c === "local-models",
+	);
 	if (hasAgentTooling && !opts.dryRun) {
 		write(`\n${blue("◆")} ${bold("Agent tooling setup")}\n`);
 		if (components.includes("harness")) {
 			write(`  ${dim("Config presets written to")} .agent-config/\n`);
-			write(`  ${dim("Seed to home dirs:")} cp -n .agent-config/omp/models.yml ~/.omp/agent/models.yml\n`);
-			write(`  ${dim("                ")} cp -n .agent-config/pi/models.json ~/.pi/agent/models.json\n`);
-			write(`  ${dim("                ")} cp -n .agent-config/opencode/opencode.json ~/.config/opencode/opencode.json\n`);
-			write(`  ${dim("                ")} cp -n .agent-config/hermes/cli-config.yaml ~/.hermes/cli-config.yaml\n`);
-			write(`  ${dim("Set")} UNSIGNED_LLM_API_KEY ${dim("for gateway access (llm.unsigned.gg/v1)")}\n`);
+			write(
+				`  ${dim("Seed to home dirs:")} cp -n .agent-config/omp/models.yml ~/.omp/agent/models.yml\n`,
+			);
+			write(
+				`  ${dim("                ")} cp -n .agent-config/pi/models.json ~/.pi/agent/models.json\n`,
+			);
+			write(
+				`  ${dim("                ")} cp -n .agent-config/opencode/opencode.json ~/.config/opencode/opencode.json\n`,
+			);
+			write(
+				`  ${dim("                ")} cp -n .agent-config/hermes/cli-config.yaml ~/.hermes/cli-config.yaml\n`,
+			);
+			write(
+				`  ${dim("Set")} UNSIGNED_LLM_API_KEY ${dim("for gateway access (llm.unsigned.gg/v1)")}\n`,
+			);
 		}
 		if (components.includes("terminal")) {
-			write(`  ${dim("Terminal configs in")} .config/overflow/ ${dim("and")} .config/ghostty/\n`);
-			write(`  ${dim("Install overflow:")} cargo install overflow ${dim("(or from releases)")}\n`);
+			write(
+				`  ${dim("Terminal configs in")} .config/overflow/ ${dim("and")} .config/ghostty/\n`,
+			);
+			write(
+				`  ${dim("Install overflow:")} cargo install overflow ${dim("(or from releases)")}\n`,
+			);
 			write(`  ${dim("Install ghostty:")}  https://ghostty.org\n`);
 		}
 		if (components.includes("skills")) {
-			write(`  ${dim("Run")} .agent-config/skills/install.sh ${dim("to symlink skills into all harness dirs")}\n`);
+			write(
+				`  ${dim("Run")} .agent-config/skills/install.sh ${dim("to symlink skills into all harness dirs")}\n`,
+			);
 		}
 		if (components.includes("local-models")) {
-			write(`  ${dim("Run")} .agent-config/local-models/probe.sh ${dim("to detect GPU + recommend model tier")}\n`);
+			write(
+				`  ${dim("Run")} .agent-config/local-models/probe.sh ${dim("to detect GPU + recommend model tier")}\n`,
+			);
 		}
 	}
 
@@ -353,13 +441,16 @@ function parseArgs(argv: string[]): CliArgs {
 				}
 				break;
 			}
-			case "--name":
-				args.name = argv[++i];
+			case "--name": {
+				const v = argv[++i];
+				if (v !== undefined) args.name = v;
 				break;
+			}
 			case "--only": {
 				const parts = argv[++i]?.split(",") ?? [];
 				args.components = parts.filter((p): p is Component =>
-					ALL_COMPONENTS.includes(p as Component));
+					ALL_COMPONENTS.includes(p as Component),
+				);
 				break;
 			}
 			default:
@@ -445,19 +536,28 @@ export async function main(argv: string[]): Promise<void> {
 
 		const total = result.written.length + result.overwritten.length;
 		if (total > 0) {
-			write(`\n${green("✓")} ${bold(`Installed ${total} file${total === 1 ? "" : "s"}`)}`);
-			if (result.skipped.length > 0) write(` ${dim(`(${result.skipped.length} skipped)`)}`);
+			write(
+				`\n${green("✓")} ${bold(`Installed ${total} file${total === 1 ? "" : "s"}`)}`,
+			);
+			if (result.skipped.length > 0)
+				write(` ${dim(`(${result.skipped.length} skipped)`)}`);
 			write("\n");
 			write(`\n  ${dim("Next steps:")}\n`);
-			write(`  ${dim("1. Review")} CLAUDE.md ${dim("and update project-specific details")}\n`);
-			write(`  ${dim("2. Commit the config:")} git add CLAUDE.md .claude/ lefthook.yml .impeccable.md\n`);
+			write(
+				`  ${dim("1. Review")} CLAUDE.md ${dim("and update project-specific details")}\n`,
+			);
+			write(
+				`  ${dim("2. Commit the config:")} git add CLAUDE.md .claude/ lefthook.yml .impeccable.md\n`,
+			);
 			write(`  ${dim("3. Install lefthook:")} lefthook install\n`);
 			write(`\n${cyan("Done.")}\n`);
 		} else if (result.skipped.length === 0 && !args.dryRun) {
 			write(`\n${yellow("!")} Nothing was installed.\n`);
 		}
 	} catch (err) {
-		write(`\n${red("✗")} ${err instanceof Error ? err.message : "Unknown error"}\n`);
+		write(
+			`\n${red("✗")} ${err instanceof Error ? err.message : "Unknown error"}\n`,
+		);
 		process.exitCode = 1;
 	}
 }
