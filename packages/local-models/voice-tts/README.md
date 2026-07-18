@@ -40,12 +40,21 @@ VOICEMODE_STREAMING_ENABLED=true
 VOICEMODE_TTS_AUDIO_FORMAT=pcm
 ```
 
-**Voice caveat:** the primary voice is a raw ElevenLabs voice_id, which the
-kokoro fallback rejects (400). If the shim is down, pass `voice="af_sky"`
-explicitly (converse param) or flip `VOICEMODE_VOICES` order. A shim-side
-default (`litellm_params.voice`) does NOT work — the request param wins.
-The operator's own professional clone (`Rp8HCB07pOfBPQX1dUG0`) is blocked
-upstream: fine-tuning never completed ("not fine-tuned and cannot be used").
+**Fallback voice alias:** the primary voice is a raw ElevenLabs voice_id,
+which kokoro would reject (400) — fixed by aliasing the id to a kokoro
+tensor, so automatic failover works with the one voice string:
+
+```bash
+cp ~/.voicemode/services/kokoro/api/src/voices/v1_0/af_sky.pt \
+   ~/.voicemode/services/kokoro/api/src/voices/v1_0/FGY2WhTYpPnrIDTdsKH5.pt
+```
+
+(Committed on the kokoro checkout's `local-rtx5090` branch together with the
+torch pin.) A shim-side default (`litellm_params.voice`) does NOT work — the
+request param wins. The operator's own professional clone
+(`Rp8HCB07pOfBPQX1dUG0`) is blocked upstream: PVC fine-tuning never completed
+(1×2-min sample; needs ≥30 min audio + identity verification).
+Plugin-launch bug filed upstream: mbailey/voicemode#504.
 
 ## Companion fixes
 
