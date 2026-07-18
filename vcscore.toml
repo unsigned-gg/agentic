@@ -1,0 +1,27 @@
+# vcs-core project configuration — committed (project/machine boundary).
+# Local overrides live in .vcscore/config.toml (gitignored, per-machine).
+# Schema: vcs_core.config.VcsCoreConfig (min_version, defaults, bindings).
+# Layer precedence: defaults -> user(~/.config/vcs-core) -> project(this) -> repo -> CLI.
+
+min_version = 1
+
+[defaults]
+# No device pin: backend selection is left to .vcscore/config.toml / CLI.
+# doctor reports backend=auto on this WSL2 host (Landlock available).
+
+# Substrate bindings. These three are tier=always / tier=auto-detect and
+# activate implicitly; declaring them explicitly pins the project's substrate
+# posture so `shepherd init` reports them as project-configured rather than
+# silently auto-detected, and surfaces drift if upstream tiers change.
+# The four shepherd.* substrates (run_driver, run_ledger, task_artifacts,
+# task_ledger) are injected programmatically by the shepherd dialect as
+# additional_substrates and do NOT belong here.
+
+[bindings.filesystem]
+type = "filesystem"
+
+[bindings.git]
+type = "git"
+
+[bindings.marker]
+type = "marker"
