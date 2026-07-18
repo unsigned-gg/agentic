@@ -44,3 +44,12 @@ test("install.sh pin matches README", () => {
   assert.ok(pin, "install.sh: no exact PI_VERSION pin");
   assert.ok(readme.includes(pin), "README pin drifted from install.sh");
 });
+
+test("@earendil-works/pi-coding-agent devDependency matches the harness pin", () => {
+  // OPS-749: the 3-way gate opencode already has. Without it a
+  // package.json-only bump (dependabot PR #37) silently diverges the
+  // devDependency from the pin the install script actually ships.
+  const pin = install.match(/^PI_VERSION="(\d+\.\d+\.\d+)"$/m)?.[1];
+  const manifest = JSON.parse(readFileSync(join(PKG, "package.json"), "utf8"));
+  assert.equal(manifest.devDependencies["@earendil-works/pi-coding-agent"], pin);
+});
