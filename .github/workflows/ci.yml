@@ -16,7 +16,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest    # GitHub-hosted: secret-safe + light. Heavy/private nodes move to self-hosted later.
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0      # moon --affected + the gitleaks diff need full history (shallow silently empties the diff)
       - uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0
@@ -34,7 +34,7 @@ jobs:
   secrets:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
       # The gitleaks GitHub Action (v2) is license-walled for orgs; the gitleaks
