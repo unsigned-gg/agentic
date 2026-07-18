@@ -47,6 +47,18 @@
         },
         "morph-glm52-744b": {
           "name": "Morph GLM-5.2 744B"
+        },
+        "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B": {
+          "name": "Nemotron 3 Nano 30B-A3B (NVIDIA)"
+        },
+        "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B": {
+          "name": "Nemotron 3 Super 120B-A12B (NVIDIA)"
+        },
+        "nvidia/NVIDIA-Nemotron-3-Ultra-550B": {
+          "name": "Nemotron 3 Ultra 550B (NVIDIA)"
+        },
+        "nvidia/Nemotron-3-Nano-Omni-Reasoning-30B-A3B": {
+          "name": "Nemotron 3 Nano Omni Reasoning 30B-A3B (NVIDIA)"
         }
       }
     },
