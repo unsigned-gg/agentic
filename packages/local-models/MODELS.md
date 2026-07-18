@@ -142,7 +142,7 @@ All UD-Q4_K_XL dynamic quants from unsloth, pulled via `hf.co/` refs.
 |---|---|---|---|
 | Qwen3.6-35B-A3B-MTP | 99 (58 plain) | ⚠️ tool-calls ✓; harness run blocked by pi client timeout on cold load — pre-warm first | T2 flagship; MTP +70%; needs load-timeout bump |
 | Qwen3.6-27B-MTP (`qwen3.6-27b-mtp`) | ~110 (68 plain) | ✅ full pi run: write files → run test → pass | dense T1 daily driver; MTP +60% |
-| GLM-4.7-Flash | 217 | ❌ emits clean calls but **corrupts tool results** (hallucinated file content 2/2 via ollama /v1) — do not use agentically as served; retry via llama.cpp `--jinja` | fastest banked |
+| GLM-4.7-Flash | 217 (ollama) · 8.3 (`--jinja`) | ✅ via `llama-server --jinja` (8/8 verbatim tool-result echo, 2026-07-16 revisit) · ❌ ollama path hard-400s on tools (no tool template in GGUF) | fastest banked *plain*; `--jinja` correct but ~26× slower on bundled build — see [`docs/eval/2026-07-16-glm-4-7-flash-jinja-verification-revisit.md`](../../docs/eval/2026-07-16-glm-4-7-flash-jinja-verification-revisit.md) |
 | Devstral Small 2 24B | 86 | ⚠️ tool-calls ✓; harness run untested (same cold-load timeout) | agent-tuned; no MTP |
 | Qwen3.5-9B-MTP (`qwen3.5-9b-mtp`) | 174 | ✅ full pi run passes (16s warm) | T0 utility/triage |
 | Gemma 4 E4B (`gemma4:latest`, pre-existing) | 209 | ✅ full pi run passes (20s) — fastest task completion | not in HF mirror; engine-upgrade beneficiary |
