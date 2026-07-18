@@ -16,10 +16,10 @@ jobs:
   ci:
     runs-on: ubuntu-latest    # GitHub-hosted: secret-safe + light. Heavy/private nodes move to self-hosted later.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0      # moon --affected + the gitleaks diff need full history (shallow silently empties the diff)
-      - uses: moonrepo/setup-toolchain@v0
+      - uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0
         with:
           auto-install: true  # installs proto + moon + the .prototools toolchains
       # One serial install up front. Without it, moon fires a per-project
@@ -34,7 +34,7 @@ jobs:
   secrets:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
       # The gitleaks GitHub Action (v2) is license-walled for orgs; the gitleaks
@@ -52,4 +52,3 @@ jobs:
           echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
           tar -xzf gitleaks.tar.gz gitleaks
           ./gitleaks git . --redact --no-banner --verbose
-# TODO(release piece): SHA-pin all actions; Dependabot keeps them current (PARADIGMS).
