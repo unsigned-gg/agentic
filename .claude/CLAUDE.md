@@ -34,5 +34,5 @@ moon tag-node tasks; python: uv via tag-python. Shell: shellcheck (CI + lint).
 
 Harness pins are bumped deliberately (PR per bump, changelog reviewed) — this
 repo's value is *curated known-good*, not latest. Current: pi-coding-agent
-0.80.10 · opencode-ai 1.17.13 · hermes-agent 0.18.0 ·
+0.80.10 · opencode-ai 1.18.3 · hermes-agent 0.18.0 ·
 @oh-my-pi/pi-coding-agent 16.3.12 (bun).
