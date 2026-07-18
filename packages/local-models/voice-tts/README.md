@@ -37,7 +37,11 @@ VOICEMODE_TTS_BASE_URLS=http://127.0.0.1:4000/v1,http://127.0.0.1:8880/v1
 VOICEMODE_TTS_MODELS=tts-1
 VOICEMODE_VOICES=FGY2WhTYpPnrIDTdsKH5,af_sky   # Laura (ElevenLabs voice_id)
 VOICEMODE_STREAMING_ENABLED=true
-VOICEMODE_TTS_AUDIO_FORMAT=pcm
+# mp3, NOT pcm: voicemode hardcodes SAMPLE_RATE=24000 for raw PCM, but
+# ElevenLabs pcm through LiteLLM is 44.1 kHz -> slow, muffled playback.
+# mp3 self-describes its rate. (litellm_params output_format can't fix it;
+# request params win.)
+VOICEMODE_TTS_AUDIO_FORMAT=mp3
 ```
 
 **Fallback voice alias:** the primary voice is a raw ElevenLabs voice_id,
@@ -63,9 +67,14 @@ Plugin-launch bug filed upstream: mbailey/voicemode#504.
   `~/.voicemode/services/kokoro/` (its `start-gpu.sh` reinstalls from
   pyproject on every boot, so the pin must live there):
   `git -C ~/.voicemode/services/kokoro apply <patch> && systemctl --user restart voicemode-kokoro`
-- **`fix-voicemode-plugin-python.sh`** — re-pin Python 3.12 for the voicemode
-  Claude Code plugin after plugin updates (Python 3.14 breaks the
-  pydantic-core build → MCP -32000).
+- **voicemode MCP -32000 — the actual root cause is cwd, not just Python.**
+  Claude Code spawns plugin MCP servers with cwd = the user's project dir, so
+  the plugin's `uv run voicemode` finds neither a project nor the command
+  (`Failed to spawn: voicemode, os error 2`). Durable fix (survives plugin
+  updates, any cwd): `uv tool install voice-mode --python 3.12`. The
+  Python 3.14 pydantic-core build failure (mbailey/voicemode#504) is a
+  second, independent blocker for in-plugin-dir launches —
+  **`fix-voicemode-plugin-python.sh`** re-pins 3.12 there after updates.
 
 ## Known limits
 
