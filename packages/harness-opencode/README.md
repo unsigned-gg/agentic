@@ -6,7 +6,7 @@ consumes: local-models/README.md (endpoint wiring)
 
 # harness-opencode
 
-[opencode](https://opencode.ai) at curated pin **`opencode-ai` 1.17.13**.
+[opencode](https://opencode.ai) at curated pin **`opencode-ai` 1.18.3**.
 
 ```bash
 ./install.sh   # npm install -g at the pin, config preset + plugins symlinked

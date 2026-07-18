@@ -4,7 +4,7 @@
 # install script; we deliberately use the npm path).
 set -euo pipefail
 
-OPENCODE_VERSION="1.17.13"
+OPENCODE_VERSION="1.18.3"
 PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 command -v npm >/dev/null 2>&1 || { echo "npm not found — run scripts/bootstrap.sh first (proto provides node)" >&2; exit 1; }
