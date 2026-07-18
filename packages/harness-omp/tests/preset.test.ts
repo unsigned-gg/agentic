@@ -80,7 +80,9 @@ describe("config.local.yml", () => {
       for (const m of p.models ?? []) declared.add(`${prov}/${m.id}`);
     }
     for (const [role, id] of Object.entries<string>(doc.modelRoles ?? {})) {
-      expect(declared.has(id), `${role}: ${id}`).toBeTrue();
+      // selectors may carry a ':level' thinking suffix (e.g. 'llm/zai/GLM-5.2:low')
+      const bare = id.replace(/:(off|minimal|low|medium|high|xhigh|max)$/, "");
+      expect(declared.has(bare), `${role}: ${id}`).toBeTrue();
     }
   });
 });
@@ -110,7 +112,9 @@ describe("config.gateway-slim.yml", () => {
       for (const m of p.models ?? []) declared.add(`${prov}/${m.id}`);
     }
     for (const [role, id] of Object.entries<string>(doc.modelRoles ?? {})) {
-      expect(declared.has(id), `${role}: ${id}`).toBeTrue();
+      // selectors may carry a ':level' thinking suffix (e.g. 'llm/zai/GLM-5.2:low')
+      const bare = id.replace(/:(off|minimal|low|medium|high|xhigh|max)$/, "");
+      expect(declared.has(bare), `${role}: ${id}`).toBeTrue();
     }
   });
 });

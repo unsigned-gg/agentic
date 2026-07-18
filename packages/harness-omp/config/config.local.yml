@@ -66,3 +66,7 @@ modelRoles:
   smol: ollama/qwen3.5-9b-mtp
   slow: ollama/qwen3.6-35b-mtp
   plan: ollama/qwen3.6-35b-mtp
+  # advisor pinned in-family: after the 2026-07 advisor 402 storm (advisor role
+  # resolved to a credit-dead paid provider, one failed call per primary turn,
+  # no circuit-breaker), the advisor role is always pinned explicitly.
+  advisor: ollama/qwen3.5-9b-mtp
