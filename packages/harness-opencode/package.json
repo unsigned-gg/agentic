@@ -9,7 +9,7 @@
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
-    "@opencode-ai/plugin": "1.17.13",
+    "@opencode-ai/plugin": "1.18.3",
     "typescript": "5.7.2"
   }
 }
