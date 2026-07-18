@@ -22,6 +22,12 @@ jobs:
       - uses: moonrepo/setup-toolchain@v0
         with:
           auto-install: true  # installs proto + moon + the .prototools toolchains
+      # One serial install up front. Without it, moon fires a per-project
+      # InstallDependencies action and concurrent pnpm runs race on the shared
+      # workspace node_modules (ERR_PNPM_ENOTEMPTY, 3× on PR #28). With the
+      # lockfile satisfied, moon's install actions become no-ops.
+      - name: pnpm install (serialized)
+        run: proto run pnpm -- install --frozen-lockfile
       - name: moon ci (affected only)
         run: moon ci --base origin/${{ github.base_ref || github.event.repository.default_branch }}
 
