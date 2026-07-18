@@ -35,10 +35,17 @@ unknown model names.
 ```bash
 VOICEMODE_TTS_BASE_URLS=http://127.0.0.1:4000/v1,http://127.0.0.1:8880/v1
 VOICEMODE_TTS_MODELS=tts-1
-VOICEMODE_VOICES=alloy,af_sky        # litellm maps alloy → ElevenLabs voice
+VOICEMODE_VOICES=FGY2WhTYpPnrIDTdsKH5,af_sky   # Laura (ElevenLabs voice_id)
 VOICEMODE_STREAMING_ENABLED=true
 VOICEMODE_TTS_AUDIO_FORMAT=pcm
 ```
+
+**Voice caveat:** the primary voice is a raw ElevenLabs voice_id, which the
+kokoro fallback rejects (400). If the shim is down, pass `voice="af_sky"`
+explicitly (converse param) or flip `VOICEMODE_VOICES` order. A shim-side
+default (`litellm_params.voice`) does NOT work — the request param wins.
+The operator's own professional clone (`Rp8HCB07pOfBPQX1dUG0`) is blocked
+upstream: fine-tuning never completed ("not fine-tuned and cannot be used").
 
 ## Companion fixes
 
