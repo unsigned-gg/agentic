@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc --noEmit",
-    "test": "node --test",
+    "test": "bun test",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
