@@ -15,7 +15,10 @@ export interface TemplateContext {
 
 function claudeMd(ctx: TemplateContext): string {
 	const { name, type } = ctx;
-	const typeHeader = type === "monorepo" ? "Monorepo" : type.charAt(0).toUpperCase() + type.slice(1);
+	const typeHeader =
+		type === "monorepo"
+			? "Monorepo"
+			: type.charAt(0).toUpperCase() + type.slice(1);
 
 	const buildSection = buildCommands(type);
 	const testSection = testCommands(type);
@@ -73,9 +76,9 @@ function testCommands(type: ProjectType): string {
 		case "rust":
 			return "- `cargo nextest run` — run tests (preferred over `cargo test`)\n- `cargo nextest run -p <crate>` — test a specific crate\n- `cargo nextest run <test_name>` — run a single test";
 		case "node":
-			return "- `pnpm test` — run tests with Vitest\n- `pnpm test -- --run` — run once without watch mode\n- `pnpm test -- -t \"name\"` — run specific test";
+			return '- `pnpm test` — run tests with Vitest\n- `pnpm test -- --run` — run once without watch mode\n- `pnpm test -- -t "name"` — run specific test';
 		case "python":
-			return "- `uv run pytest` — run all tests\n- `uv run pytest tests/test_foo.py` — specific file\n- `uv run pytest -k \"name\"` — specific test";
+			return '- `uv run pytest` — run all tests\n- `uv run pytest tests/test_foo.py` — specific file\n- `uv run pytest -k "name"` — specific test';
 		case "go":
 			return "- `go test ./...` — run all tests\n- `go test -run TestName ./...` — run specific test";
 		case "monorepo":
@@ -96,7 +99,7 @@ function lintCommands(type: ProjectType): string {
 		case "go":
 			return "- `gofmt -l .` — check formatting\n- `gofmt -w .` — auto-format\n- `go vet ./...` — static analysis";
 		case "monorepo":
-			return "- `moon run :format --affected` — format changed projects\n- Per-project lint via \`moon run <project>:lint\`";
+			return "- `moon run :format --affected` — format changed projects\n- Per-project lint via `moon run <project>:lint`";
 		default:
 			return "";
 	}
@@ -113,7 +116,7 @@ function securityCommands(type: ProjectType): string {
 		case "go":
 			return "- `govulncheck ./...` — vulnerability scan\n- `gitleaks protect --staged --redact` — pre-commit secret scan (hooked)";
 		case "monorepo":
-			return "- `gitleaks protect --staged --redact` — pre-commit secret scan (hooked via lefthook)\n- Per-project security tasks via \`moon run <project>:audit\`";
+			return "- `gitleaks protect --staged --redact` — pre-commit secret scan (hooked via lefthook)\n- Per-project security tasks via `moon run <project>:audit`";
 		default:
 			return "";
 	}
@@ -142,15 +145,30 @@ function claudeSettings(ctx: TemplateContext): string {
 					{
 						matcher: "Bash",
 						hooks: [
-							{ type: "command", command: "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-main-push.sh", timeout: 5 },
-							{ type: "command", command: "${CLAUDE_PROJECT_DIR}/.claude/hooks/ci-gate.sh", timeout: 1800 },
+							{
+								type: "command",
+								command:
+									"${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-main-push.sh",
+								timeout: 5,
+							},
+							{
+								type: "command",
+								command: "${CLAUDE_PROJECT_DIR}/.claude/hooks/ci-gate.sh",
+								timeout: 1800,
+							},
 						],
 					},
 				],
 				PostToolUse: [
 					{
 						matcher: "Write|Edit|MultiEdit",
-						hooks: [{ type: "command", command: "${CLAUDE_PROJECT_DIR}/.claude/hooks/lint-on-edit.sh", timeout: 120 }],
+						hooks: [
+							{
+								type: "command",
+								command: "${CLAUDE_PROJECT_DIR}/.claude/hooks/lint-on-edit.sh",
+								timeout: 120,
+							},
+						],
 					},
 				],
 			},
@@ -180,12 +198,27 @@ function buildAllowList(type: ProjectType): string[] {
 	];
 	const typeSpecific: Record<ProjectType, string[]> = {
 		rust: ["Bash(cargo *)", "Bash(rustup *)", "Bash(rustc *)"],
-		node: ["Bash(pnpm *)", "Bash(npm *)", "Bash(bun *)", "Bash(npx *)", "Bash(node *)"],
+		node: [
+			"Bash(pnpm *)",
+			"Bash(npm *)",
+			"Bash(bun *)",
+			"Bash(npx *)",
+			"Bash(node *)",
+		],
 		python: ["Bash(uv *)", "Bash(python3 *)", "Bash(python *)", "Bash(pip *)"],
 		go: ["Bash(go *)"],
-		monorepo: ["Bash(moon *)", "Bash(proto *)", "Bash(cargo *)", "Bash(pnpm *)", "Bash(npm *)", "Bash(uv *)", "Bash(python3 *)", "Bash(go *)"],
+		monorepo: [
+			"Bash(moon *)",
+			"Bash(proto *)",
+			"Bash(cargo *)",
+			"Bash(pnpm *)",
+			"Bash(npm *)",
+			"Bash(uv *)",
+			"Bash(python3 *)",
+			"Bash(go *)",
+		],
 	};
-	return [...universal, ...base, ...typeSpecific[type] ?? []];
+	return [...universal, ...base, ...(typeSpecific[type] ?? [])];
 }
 
 // ─── Hooks ──────────────────────────────────────────────────────────────────
@@ -746,12 +779,12 @@ TARGETS=(
 
 linked=0
 for target in "\${TARGETS[@]}"; do
-  mkdir -p "\$target"
+  mkdir -p "$target"
   for skill in "\${PKG_DIR}"/*/; do
-    name="\$(basename "\$skill")"
+    name="$(basename "$skill")"
     [ -f "\${skill}SKILL.md" ] || continue
     ln -sfn "\${skill%/}" "\${target}/\${name}"
-    linked=\$((linked + 1))
+    linked=$((linked + 1))
   done
 done
 echo "skills linked: \${linked} links across \${#TARGETS[@]} harness dirs"
@@ -768,8 +801,8 @@ echo "=== Hardware Probe ==="
 
 # GPU
 if command -v nvidia-smi >/dev/null 2>&1; then
-  vram_mb=\$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | head -1)
-  gpu_name=\$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1)
+  vram_mb=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | head -1)
+  gpu_name=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1)
   echo "GPU: \${gpu_name} (\${vram_mb} MB VRAM)"
 elif command -v rocminfo >/dev/null 2>&1; then
   echo "GPU: AMD ROCm detected"
@@ -783,14 +816,14 @@ else
 fi
 
 # CPU + RAM
-cpu_cores=\$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-ram_gb=\$(free -g 2>/dev/null | awk '/^Mem:/{print \$2}' || echo 8)
+cpu_cores=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+ram_gb=$(free -g 2>/dev/null | awk '/^Mem:/{print $2}' || echo 8)
 echo "CPU: \${cpu_cores} cores"
 echo "RAM: \${ram_gb} GB"
 
 echo ""
 echo "=== Recommendation ==="
-vram_gb=\$((vram_mb / 1024))
+vram_gb=$((vram_mb / 1024))
 if [ "\${vram_gb}" -ge 48 ]; then
   echo "Tier: HIGH — can run 70B+ models"
   echo "  ollama pull qwen3.6-72b or serve via vLLM"
@@ -824,7 +857,10 @@ echo "All serve OpenAI-compatible on fixed ports — every harness preset is pre
 
 // ─── Template registry ─────────────────────────────────────────────────────
 
-export function getTemplateFiles(ctx: TemplateContext, components: Component[]): TemplateFile[] {
+export function getTemplateFiles(
+	ctx: TemplateContext,
+	components: Component[],
+): TemplateFile[] {
 	const files: TemplateFile[] = [];
 
 	for (const component of components) {
@@ -834,13 +870,19 @@ export function getTemplateFiles(ctx: TemplateContext, components: Component[]):
 					{ path: "CLAUDE.md", content: claudeMd(ctx) },
 					{ path: ".claude/settings.json", content: claudeSettings(ctx) },
 					{ path: ".claude/README.md", content: CLAUDE_README },
-					{ path: ".claude/settings.local.example.json", content: SETTINGS_LOCAL_EXAMPLE },
+					{
+						path: ".claude/settings.local.example.json",
+						content: SETTINGS_LOCAL_EXAMPLE,
+					},
 					{ path: ".gitignore.create", content: GITIGNORE_ENTRIES },
 				);
 				break;
 			case "hooks":
 				files.push(
-					{ path: ".claude/hooks/guard-main-push.sh", content: GUARD_MAIN_PUSH },
+					{
+						path: ".claude/hooks/guard-main-push.sh",
+						content: GUARD_MAIN_PUSH,
+					},
 					{ path: ".claude/hooks/ci-gate.sh", content: CI_GATE },
 					{ path: ".claude/hooks/lint-on-edit.sh", content: LINT_ON_EDIT },
 				);
@@ -854,29 +896,46 @@ export function getTemplateFiles(ctx: TemplateContext, components: Component[]):
 			case "terminal":
 				files.push(
 					{ path: ".config/overflow/overflow.toml", content: OVERFLOW_CONFIG },
-					{ path: ".config/overflow/themes/unsigned.toml", content: OVERFLOW_THEME_UNSIGNED },
-					{ path: ".config/overflow/shell-integration/bash.sh", content: SHELL_INTEGRATION_BASH },
+					{
+						path: ".config/overflow/themes/unsigned.toml",
+						content: OVERFLOW_THEME_UNSIGNED,
+					},
+					{
+						path: ".config/overflow/shell-integration/bash.sh",
+						content: SHELL_INTEGRATION_BASH,
+					},
 					{ path: ".config/ghostty/config", content: GHOSTTY_CONFIG },
 				);
 				break;
 			case "harness":
 				files.push(
 					{ path: ".agent-config/omp/models.yml", content: OMP_MODELS },
-					{ path: ".agent-config/omp/config.local.yml", content: OMP_CONFIG_LOCAL },
+					{
+						path: ".agent-config/omp/config.local.yml",
+						content: OMP_CONFIG_LOCAL,
+					},
 					{ path: ".agent-config/pi/models.json", content: PI_MODELS },
-					{ path: ".agent-config/opencode/opencode.json", content: OPENCODE_CONFIG },
-					{ path: ".agent-config/hermes/cli-config.yaml", content: HERMES_CONFIG },
+					{
+						path: ".agent-config/opencode/opencode.json",
+						content: OPENCODE_CONFIG,
+					},
+					{
+						path: ".agent-config/hermes/cli-config.yaml",
+						content: HERMES_CONFIG,
+					},
 				);
 				break;
 			case "skills":
-				files.push(
-					{ path: ".agent-config/skills/install.sh", content: SKILLS_INSTALL },
-				);
+				files.push({
+					path: ".agent-config/skills/install.sh",
+					content: SKILLS_INSTALL,
+				});
 				break;
 			case "local-models":
-				files.push(
-					{ path: ".agent-config/local-models/probe.sh", content: PROBE_SCRIPT },
-				);
+				files.push({
+					path: ".agent-config/local-models/probe.sh",
+					content: PROBE_SCRIPT,
+				});
 				break;
 		}
 	}

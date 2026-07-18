@@ -28,7 +28,11 @@ export function detectProject(cwd: string = process.cwd()): DetectedProject {
 	const dirName = root.split("/").pop() ?? "project";
 
 	// Monorepo detection takes priority
-	for (const marker of [".moon/workspace.yml", "pnpm-workspace.yaml", "melos.yaml"]) {
+	for (const marker of [
+		".moon/workspace.yml",
+		"pnpm-workspace.yaml",
+		"melos.yaml",
+	]) {
 		if (existsSync(join(root, marker))) {
 			signals.push(marker);
 			return { type: "monorepo", name: dirName, root, signals };
@@ -68,7 +72,9 @@ function extractName(root: string, type: ProjectType, marker: string): string {
 			case "go": {
 				// go.mod first line is "module <name>"
 				const match = content.match(/^module\s+(\S+)/m);
-				return match?.[1]?.split("/").pop() ?? root.split("/").pop() ?? "project";
+				return (
+					match?.[1]?.split("/").pop() ?? root.split("/").pop() ?? "project"
+				);
 			}
 			default:
 				return root.split("/").pop() ?? "project";
