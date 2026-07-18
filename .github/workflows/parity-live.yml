@@ -1,0 +1,31 @@
+name: Parity (live gateway)
+
+# OPS-729: scheduled drift detector between the four harness presets and the
+# live gateway catalog. The in-repo presets-parity gate proves the presets
+# agree with EACH OTHER; only this run proves they agree with what
+# llm.unsigned.gg actually serves. Red run = catalog drift (found at runtime
+# otherwise — 24 unmapped models on 2026-07-18).
+on:
+  schedule:
+    - cron: '17 6 * * 1'   # weekly, Mon 06:17 UTC (off the :00 thundering herd)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  parity-live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0
+        with:
+          auto-install: true
+      - name: presets-parity vs live /v1/models
+        env:
+          PARITY_LIVE: '1'
+          # Gateway virtual key (read-only model listing). Rotation: 1P item
+          # `unsigned-llm`; re-set with `gh secret set UNSIGNED_LLM_API_KEY`.
+          UNSIGNED_LLM_API_KEY: ${{ secrets.UNSIGNED_LLM_API_KEY }}
+        working-directory: packages/presets-parity
+        run: proto run bun -- test

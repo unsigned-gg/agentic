@@ -20,7 +20,11 @@ change one file, change them all in the same PR.
 
 `PARITY_LIVE=1 UNSIGNED_LLM_API_KEY=… bun test` adds a network check that the
 live gateway serves every preset model (presets must never list a model the
-gateway lacks; the gateway MAY serve more). Deliberately not CI-gated.
+gateway lacks; the gateway MAY serve more). Not gated on PRs — instead it runs
+on a weekly schedule (`.github/workflows/parity-live.yml`, Mon 06:17 UTC +
+`workflow_dispatch`) against the `UNSIGNED_LLM_API_KEY` repo Actions secret
+(gateway virtual key; 1P item `unsigned-llm` — never committed). A red
+scheduled run means the gateway catalog drifted from the presets (OPS-729).
 
 ## Verified
 
