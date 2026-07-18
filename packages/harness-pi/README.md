@@ -7,7 +7,7 @@ consumes: local-models/README.md (endpoint wiring)
 # harness-pi
 
 [pi.dev](https://pi.dev) (`badlogic/pi-mono`) at curated pin
-**`@earendil-works/pi-coding-agent` 0.80.3**.
+**`@earendil-works/pi-coding-agent` 0.80.10**.
 
 ```bash
 ./install.sh   # npm install -g at the pin, presets + extensions symlinked

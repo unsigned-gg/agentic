@@ -3,7 +3,7 @@
 # package's presets. Idempotent. No curl|bash — npm-native install only.
 set -euo pipefail
 
-PI_VERSION="0.80.3"
+PI_VERSION="0.80.10"
 PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 command -v npm >/dev/null 2>&1 || { echo "npm not found — run scripts/bootstrap.sh first (proto provides node)" >&2; exit 1; }
