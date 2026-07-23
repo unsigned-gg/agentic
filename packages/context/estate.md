@@ -16,21 +16,25 @@ start of infra work.
 
 ## The constellation (clusters)
 
-- **Cygnus** — the PRODUCTION cluster: all-metal Talos (Vultr bare metal, ewr,
-  Cilium), promoted from the ex-Vela bench 2026-07-07. Hosts `*.unsigned.gg`.
-  kubeconfig `~/.kube/cygnus`, talos context `cygnus`. Migration epic OPS-468.
-- **Lyra** — the dev VKE cluster (Vultr Kubernetes Engine, k8s 1.34.x, Calico).
-  ~60+ ArgoCD-managed apps. Hostnames `*.dev.unsigned.gg` / `*.dev.cerebral.work`,
-  fronted by Cloudflare tunnel → in-cluster Traefik. **Retiring** per OPS-468
-  as Cygnus absorbs workloads — check migration state before assuming a
-  workload's home.
+- **Cygnus** — THE production cluster and, since the OPS-468 migration completed,
+  the **SOLE** cluster: all-metal Talos (Vultr bare metal, ewr, Cilium+WireGuard),
+  promoted from the ex-Vela bench 2026-07-07. Hosts `*.unsigned.gg`.
+  kubeconfig `~/.kube/cygnus`, talos context `cygnus`.
+- **Lyra** — the ex dev VKE cluster, **DECOMMISSIONED 2026-07-18 (OPS-468 migration
+  DONE)**: TF module removed, ArgoCD single-cluster (zero remote-cluster secrets),
+  edge cut over. There is one cluster (Cygnus) — **no dev VKE, no rollback target**;
+  do not assume one exists. The dual-target VKE+Talos `deploymentTarget` model is retired.
 - Reserved names: Orion (GCP burst-GPU satellite), Pleiades (Hetzner, if ever).
-  Doctrine: single-zone Vultr.
-- Platform stack (Lyra dev tier): ArgoCD (GitOps, **manual sync only**),
-  Traefik + cert-manager edge, Keycloak (OIDC/SSO), OpenBao + External
-  Secrets, Harbor (images + charts), Prometheus/Grafana/Loki/Jaeger,
-  CNPG (postgres), Tailscale (tailnet access), Kyverno (policy).
-  Cygnus adds: Longhorn (storage), WireGuard node mesh, Hubble/Tetragon.
+  Doctrine: single-zone Vultr. **GPU/inference pivoted to a rented A100→colo path
+  (OPS-549) — the in-cluster gpu-pool / Dynamo-Triton design is abandoned.**
+- Platform stack (Cygnus): ArgoCD (GitOps, **manual sync** for stateful/CRD/
+  credential apps + a small auto-sync set), Traefik + cert-manager + cloudflared
+  edge, Keycloak (OIDC/SSO), OpenBao + External Secrets, Harbor (images+charts),
+  observability = Prometheus/Alertmanager (HA) + Thanos + Loki + **Tempo** (Jaeger
+  retired) + Grafana + VictoriaMetrics/Pyrra/Langfuse/Phoenix, CNPG (postgres, 3/3),
+  Longhorn (storage), Tailscale, Kyverno + **SPIRE** (workload identity), **Forgejo**
+  (git+CI), **LACE** (kagent+hermes) agent runtime, WireGuard mesh, Hubble/Tetragon.
+  Live HA has SPOFs remaining (OpenBao/Keycloak/Loki/Tempo single-replica).
 
 ## Repo map (one line each; owner-bucket layout under ~/projects/)
 
