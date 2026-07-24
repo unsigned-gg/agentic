@@ -36,7 +36,7 @@ start of infra work.
 
 - `unsigned/paas` (unsigned-paas) — the platform monorepo: Terraform, ~27 Helm
   charts, ArgoCD apps, CI, SOPs. THE infra repo. Read its `CLAUDE.md` first.
-- `cerebral/reverie` — engram memory daemon (`reveried`) + mesh tooling.
+- `cerebral/reverie` — the reverie memory daemon (`reveried`) + mesh tooling.
 - `todie/agentic` — harness configs (pi/opencode/hermes/omp), shared skills,
   local-model serving, this brief's source (`packages/context/`).
 - `cerebral/terrarium` — moon-monorepo incubator + node registry (CANON.md).
@@ -49,6 +49,36 @@ start of infra work.
   `unsigned-gg` — design canon), `linearctl` (headless Linear CLI). herdr
   (agent session multiplexer) is an installed tool — no local checkout.
 
+## Terminal multiplexer — herdr (NOT tmux)
+
+The operator's terminal multiplexer is **herdr** (`~/.local/bin/herdr`; no
+local checkout — installed tool). NO tmux server runs on this machine. All
+pane/tab/layout/workspace ops and the agent-session lifecycle go through the
+herdr socket API (`~/.config/herdr/herdr.sock`) or the `herdr` CLI.
+
+- Server: `herdr status` (local client + running server). `herdr server stop` /
+  `herdr server reload-config` manage the daemon. Config: `~/.config/herdr/config.toml`.
+- Session discovery: `herdr session list` (workspaces), `herdr pane list`
+  (all panes with cwd), `herdr agent list` (JSON: agent kind, status, cwd,
+  pane_id, session path). **Parse `herdr agent list` before assuming which
+  sessions are running or which pane is which agent.**
+- Agent lifecycle: `herdr agent start <NAME> --kind <KIND> --pane <ID>` boots a
+  supported agent (claude, omp, pi, codex, gemini, hermes, …) in an existing
+  pane that is at its interactive shell prompt. Read output with
+  `herdr agent read <pane_id> --lines N`. Drive input with
+  `herdr agent send-keys`, `herdr agent prompt`, or `herdr agent wait`.
+- Recon before touching an agent pane: `herdr agent read <pane_id> --lines 30`
+  to see recent output and avoid destroying in-flight work.
+- Do NOT `herdr agent start` into a pane that already has a live agent — quit
+  the existing session first (`/exit` via `herdr agent send-keys` or prompt).
+- Model lane / agent config lives OUTSIDE herdr: omp reads
+  `~/.omp/agent/config.yml` (`modelRoles`: task/advisor/default keyed as
+  `llm/<model>:<reasoning>`), Claude reads `~/.claude/CLAUDE.md` +
+  `settings.json`. Restarting an agent session is how a config change takes
+  effect for that pane.
+- Keybindings emulate tmux (prefix=backtick, h/j/k/l pane nav, |/− splits).
+  Plugins: command palette (prefix+p), lazygit (C-g), file viewer, reviewr.
+
 ## Doctrine & SOP index (authoritative docs, in-repo)
 
 - unsigned-paas: `docs/sop/` (incl. auth-enforcement), `docs/platform-deployment-plan.md`
@@ -60,17 +90,22 @@ start of infra work.
   pinned; daemonless builds (ko / buildpacks / rootless BuildKit — kaniko retired).
 - ArgoCD: everything manual-sync; ApplicationSet changes apply only via
   `git show origin/main:<file> | kubectl apply` (surface guard).
-- Ops gotchas live in engram + `~/.claude/projects/*/memory/` — search before
+- Ops gotchas live in reverie + `~/.claude/projects/*/memory/` — search before
   re-deriving (e.g. Vultr managed-DB VPC IP drift, CNPG role-sync restart,
   Helm-4 value reuse, Tailscale LB is L4-only).
+- Blast-radius & estate ops: `~/.agents/sops/blast-radius-and-estate-ops.md` —
+  verify true blast radius before "fix/rotate/do it"; scoped fixes, stay in lane;
+  LLM-gateway admin via tailnet (public host WAF-403s); large Harbor push via
+  tailnet crane (OPS-810); kagent MCP deploy schema + FastMCP/conda-pack gotchas.
 
 ## Memory of record & context intake
 
-- **Engram is the sole cross-harness memory of record.** Daemon `reveried`
-  (`~/.local/bin/engram`), HTTP on `127.0.0.1:7437`, MCP server available.
+- **Reverie is the sole cross-harness memory of record.** Daemon `reveried`
+  (`~/.local/bin/reveried`; legacy-alias symlink `engram`), HTTP on
+  `127.0.0.1:7437`, MCP server available (registered under legacy name `engram`).
   - Search: `GET /search?q=…` · Project context: `GET /context/smart?project=<name>&limit=15`
 - Obsidian vault at `~/vault` is the operator's reflection layer.
-- **Never claim "no prior context exists" without searching engram + vault.**
+- **Never claim "no prior context exists" without searching reverie + vault.**
 - Live cluster/system claims require a fresh probe (kubectl, argocd via
   kubectl reads, curl) — never memory, tickets, or this file.
 
@@ -78,7 +113,7 @@ start of infra work.
 
 - OpenBao (in-cluster) is primary; a 1Password vault is the interim store,
   read per-call via `op read` — item pointers live in private user config and
-  engram, never in this brief. Never echo a secret value.
+  reverie, never in this brief. Never echo a secret value.
 - OpenBao carries the widest blast radius of any service on the estate: check
   blast radius before touching it or anything that fronts it.
 - Exposed secret = compromised: flag for rotation immediately (the operator

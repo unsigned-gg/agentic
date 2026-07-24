@@ -20,7 +20,7 @@
    then run. Pin versions; no `latest` image tags.
 7. ArgoCD ApplicationSet changes apply only via
    `git show origin/main:<file> | kubectl apply` — never from a working tree.
-8. Park, don't drop: deferred work goes to Linear (or engram), never held only
+8. Park, don't drop: deferred work goes to Linear (or reverie), never held only
    in conversation. One thread to done before opening the next.
 9. When a guard/hook blocks an action: stop and surface — never override and
    proceed.
