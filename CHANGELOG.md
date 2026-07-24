@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/unsigned-gg/agentic/compare/v1.0.0...v1.1.0) (2026-07-24)
+
+
+### Added
+
+* **context:** register cerebral-work/os (soma) in the estate brief ([#45](https://github.com/unsigned-gg/agentic/issues/45)) ([eb6cb60](https://github.com/unsigned-gg/agentic/commit/eb6cb60ce5cd161000ebdd61851b06145bec72ca))
+* **presets-parity:** promote contextWindow drift check to assertion; align presets to /model/info (OPS-732) ([#43](https://github.com/unsigned-gg/agentic/issues/43)) ([966abb6](https://github.com/unsigned-gg/agentic/commit/966abb63c6476fe3b7ad6c606bfa911c4b48ef1b))
+
 ## 1.0.0 (2026-07-18)
 
 
